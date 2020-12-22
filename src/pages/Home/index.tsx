@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { Menu } from '../../components'
 import { Header } from '../../components/Header'
-import { Radio, DatePicker, Table, Space, Button } from 'antd'
+import { Radio, DatePicker, Table, Space } from 'antd'
 import moment from 'moment'
 
 import {
@@ -85,82 +85,6 @@ export default function Home() {
     },
     {
       id: 3,
-      name: 'Joe Black',
-      dateAdmission: '22/12/202',
-      address: 'Sidney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
-    },
-    {
-      id: 4,
-      name: 'John Brown',
-      dateAdmission: '24/12/2020',
-    },
-    {
-      id: 5,
-      name: 'Jim Green',
-      dateAdmission: '22/12/202',
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
-    },
-    {
-      id: 6,
-      name: 'Joe Black',
-      dateAdmission: '22/12/202',
-      address: 'Sidney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
-    },
-    {
-      id: 7,
-      name: 'John Brown',
-      dateAdmission: '24/12/2020',
-    },
-    {
-      id: 8,
-      name: 'Jim Green',
-      dateAdmission: '22/12/202',
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
-    },
-    {
-      id: 9,
-      name: 'Joe Black',
-      dateAdmission: '22/12/202',
-      address: 'Sidney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
-    },
-    {
-      id: 10,
-      name: 'John Brown',
-      dateAdmission: '24/12/2020',
-    },
-    {
-      id: 11,
-      name: 'Jim Green',
-      dateAdmission: '22/12/202',
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
-    },
-    {
-      id: 13,
-      name: 'Joe Black',
-      dateAdmission: '22/12/202',
-      address: 'Sidney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
-    },
-    {
-      id: 134,
-      name: 'John Brown',
-      dateAdmission: '24/12/2020',
-    },
-    {
-      id: 223,
-      name: 'Jim Green',
-      dateAdmission: '22/12/202',
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
-    },
-    {
-      id: 312,
       name: 'Joe Black',
       dateAdmission: '22/12/202',
       address: 'Sidney No. 1 Lake Park',

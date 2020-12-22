@@ -1,8 +1,6 @@
 import styled from 'styled-components'
-import { Colors } from '../../styles/colors'
 
 import { Button, Input } from 'antd'
-import { Link } from 'react-router-dom'
 
 export const Container = styled.div`
   position: relative;
