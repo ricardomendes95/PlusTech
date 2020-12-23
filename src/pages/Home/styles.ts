@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { Button, Input } from 'antd'
+import { Button } from 'antd'
 
 export const Container = styled.div`
   position: relative;
@@ -10,24 +10,10 @@ export const Content = styled.div`
   margin-top: 5%;
 `
 
-export const HeaderContent = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: row;
-  margin-bottom: 3%;
-
-  .ant-radio-group {
-    margin-left: 20px;
-  }
-`
-export const Search = styled(Input.Search)`
-  min-width: 302px;
-`
-
 export const Action = styled.a`
   cursor: pointer;
 `
+
 export const Footer = styled.div`
   display: flex;
   align-items: center;

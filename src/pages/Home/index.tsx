@@ -1,9 +1,8 @@
 /* eslint-disable react/display-name */
 import React, { useState } from 'react'
-import { Menu } from '../../components'
-import { Header } from '../../components/Header'
-import { Radio, DatePicker, Table, Space } from 'antd'
-import moment from 'moment'
+import { SearchTypes, ToggleActiveTypes } from '../../components/HeaderContent'
+import { HeaderContent, Menu, Header } from '../../components'
+import { Table, Space } from 'antd'
 
 import {
   AiOutlineEdit,
@@ -13,20 +12,13 @@ import {
 import { GiCancel } from 'react-icons/gi'
 
 import * as S from './styles'
-
-import { RadioChangeEvent } from 'antd/lib/radio'
+import { useHistory } from 'react-router-dom'
+import { routes } from '../../routes'
 
 export default function Home() {
-  const [searchType, setSearchType] = useState('name')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [searchDate, setSearchDate] = useState({ start: '', end: '' })
-  const [toggleActive, setToggleActive] = useState('active')
+  const history = useHistory()
 
-  const dateFormat = 'DD/MM/YYYY'
-  const searchOptions = [
-    { label: 'Nome', value: 'name' },
-    { label: 'Data', value: 'date' },
-  ]
+  const [toggleActive, setToggleActive] = useState<ToggleActiveTypes>('active')
 
   const columns = [
     {
@@ -91,6 +83,7 @@ export default function Home() {
       tags: ['cool', 'teacher'],
     },
   ]
+
   function update(id: number) {
     console.log('send update colaboration:', id)
   }
@@ -98,24 +91,22 @@ export default function Home() {
   function disable(id: number) {
     console.log('send Delete colaboration:', id)
   }
+
   function enable(id: number) {
     console.log('send enable colaboration:', id)
   }
 
-  function onSearch(value: string) {
-    console.log(value)
+  function handleSearch(value: string | Date[], searchType: SearchTypes) {
+    console.log('value', value)
+    console.log('searchType', searchType)
   }
 
-  function handleDateChange(e: any) {
-    const dates: string[] = []
-
-    e?.forEach((date: any) => dates.push(date.toLocaleString()))
-    setSearchDate({ start: dates[0], end: dates[1] })
+  function handleToggleActive(toggleActive: ToggleActiveTypes) {
+    setToggleActive(toggleActive)
   }
 
-  function filterType(e: RadioChangeEvent) {
-    console.log('radio2 checked', e.target.value)
-    setSearchType(e.target.value)
+  function handleNewContributor() {
+    history.push(routes.newContributor)
   }
 
   return (
@@ -123,40 +114,10 @@ export default function Home() {
       <S.Container>
         <Header text="Colaboradores" />
         <S.Content>
-          <S.HeaderContent>
-            <div>
-              {searchType === 'name' ? (
-                <S.Search
-                  placeholder="Pesquisar"
-                  onSearch={onSearch}
-                  style={{ width: 200 }}
-                />
-              ) : (
-                <DatePicker.RangePicker
-                  defaultValue={[
-                    moment(new Date(), dateFormat),
-                    moment(new Date(), dateFormat),
-                  ]}
-                  format={dateFormat}
-                  onChange={handleDateChange}
-                />
-              )}
-              <Radio.Group
-                options={searchOptions}
-                onChange={filterType}
-                value={searchType}
-              />
-            </div>
-            <div>
-              <Radio.Group
-                value={toggleActive}
-                onChange={e => setToggleActive(e.target.value)}
-              >
-                <Radio.Button value="active">Ativos</Radio.Button>
-                <Radio.Button value="inactive">Inativos</Radio.Button>
-              </Radio.Group>
-            </div>
-          </S.HeaderContent>
+          <HeaderContent
+            onSearch={handleSearch}
+            onToggleActive={handleToggleActive}
+          />
 
           <Table
             columns={columns}
@@ -167,7 +128,12 @@ export default function Home() {
           />
 
           <S.Footer>
-            <S.Create type="primary" icon={<AiOutlinePlus />} size="large">
+            <S.Create
+              type="primary"
+              icon={<AiOutlinePlus />}
+              size="large"
+              onClick={handleNewContributor}
+            >
               Criar
             </S.Create>
           </S.Footer>
