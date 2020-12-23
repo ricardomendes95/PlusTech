@@ -9,4 +9,8 @@ export interface Definitions {
     login: string
     password: string
   }
+  Pool: {
+    id: number
+    name: string
+  }
 }

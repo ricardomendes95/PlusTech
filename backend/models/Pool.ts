@@ -3,8 +3,8 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
 @Entity('pools')
 export default class Pool {
   @PrimaryGeneratedColumn('increment')
-  id!: number
+  id: number | undefined
 
-  @Column()
-  name!: string
+  @Column('text')
+  name: string | undefined
 }

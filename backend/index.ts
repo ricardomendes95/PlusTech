@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import './database/connection'
 import { routes } from './routes'
 

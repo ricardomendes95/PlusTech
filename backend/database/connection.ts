@@ -7,4 +7,5 @@ createConnection({
   username: 'root',
   password: 'password',
   database: 'plustech',
+  entities: ['../models/*.ts'],
 })

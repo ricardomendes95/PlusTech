@@ -5,12 +5,13 @@ import * as S from './styles'
 import { useHistory } from 'react-router-dom'
 import { Alert } from '../../components'
 import { AuthService } from '../../services'
+import { routes } from '../../routes'
 
 export default function Login() {
   const history = useHistory()
 
-  const [user, setUser] = useState('')
-  const [password, setPassword] = useState('')
+  const [user, setUser] = useState('admin')
+  const [password, setPassword] = useState('admin')
   const [error, setError] = useState('')
 
   async function handleLogin(event: FormEvent) {
@@ -24,7 +25,7 @@ export default function Login() {
     try {
       await AuthService.login({ login: user, password })
 
-      history.push('/home')
+      history.push(routes.pool)
     } catch (error) {
       setError(error)
     }

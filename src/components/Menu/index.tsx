@@ -8,6 +8,7 @@ import {
   AiOutlineSetting,
 } from 'react-icons/ai'
 import { Link, useLocation } from 'react-router-dom'
+import { routes } from '../../routes'
 
 import * as S from './styles'
 
@@ -33,23 +34,30 @@ export const Menu: React.FC<MenuProps> = ({ active = 'none', children }) => {
         </S.MenuItem>
 
         <S.MenuItem active={active === 'home'}>
-          <Link to={{ pathname: '/home', state: { open } }}>
+          <Link to={{ pathname: routes.home, state: { open } }}>
             <AiOutlineTeam size={50} />
             {open && <span>Colaborador</span>}
           </Link>
         </S.MenuItem>
 
         <S.MenuItem active={active === 'moving'}>
-          <Link to={{ pathname: '/home', state: { open } }}>
+          <Link to={{ pathname: routes.home, state: { open } }}>
             <AiOutlineSwap size={50} />
             {open && <span>Movimentação</span>}
           </Link>
         </S.MenuItem>
 
         <S.MenuItem active={active === 'settings'}>
-          <Link to={{ pathname: '/settings', state: { open } }}>
+          <Link to={{ pathname: routes.settings, state: { open } }}>
             <AiOutlineSetting size={50} />
             {open && <span>Configuração</span>}
+          </Link>
+        </S.MenuItem>
+
+        <S.MenuItem active={false}>
+          <Link to={{ pathname: routes.login, state: { open } }}>
+            <AiOutlineSetting size={50} />
+            {open && <span>Sair</span>}
           </Link>
         </S.MenuItem>
       </S.Menu>
