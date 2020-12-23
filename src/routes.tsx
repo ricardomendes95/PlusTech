@@ -10,6 +10,8 @@ export const routes = {
   home: '/home',
   settings: '/settings',
   newContributor: '/contributor/new',
+  pool: '/pool',
+  newPool: '/pool/new',
 }
 
 const Routes: React.FC = () => {

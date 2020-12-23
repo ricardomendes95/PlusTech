@@ -1,3 +1,4 @@
+import './database/connection'
 import { routes } from './routes'
 
 /**
