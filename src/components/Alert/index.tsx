@@ -15,5 +15,5 @@ interface AlertProps {
 }
 
 export const Alert = ({ text, kind = 'success' }: AlertProps) => (
-  <S.Alert kind={kind} >{text}</S.Alert>
+  <S.Alert kind={kind}>{text}</S.Alert>
 )

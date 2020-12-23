@@ -6,22 +6,22 @@ export interface AlertProps {
 }
 
 export const Alert = styled.span<AlertProps>`
-  padding:10px 0;
+  padding: 10px 0;
   width: 100%;
   border-radius: 4px;
   text-align: center;
- 
+
   ${({ kind }) => {
     switch (kind) {
       case 'error':
         return css`
           color: #721c24;
-          background-color: #F8D7DB;
+          background-color: #f8d7db;
         `
       case 'success':
         return css`
           color: #165724;
-          background-color: #D4EDDA;
+          background-color: #d4edda;
         `
     }
   }}
