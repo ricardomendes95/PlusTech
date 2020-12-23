@@ -4,15 +4,16 @@ import { Button } from 'antd'
 import * as S from './styles'
 import { useHistory } from 'react-router-dom'
 import { Alert } from '../../components'
+import { AuthService } from '../../services'
 
-export default function Login () {
+export default function Login() {
   const history = useHistory()
 
   const [user, setUser] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  function handleLogin (event: FormEvent) {
+  async function handleLogin(event: FormEvent) {
     event.preventDefault()
 
     if (!user || !password) {
@@ -20,20 +21,38 @@ export default function Login () {
       return
     }
 
-    history.push('/home')
+    try {
+      await AuthService.login({ login: user, password })
+
+      history.push('/home')
+    } catch (error) {
+      setError(error)
+    }
   }
 
   return (
     <S.Container>
-      <S.Title><strong>PLUS</strong> TECH</S.Title>
+      <S.Title>
+        <strong>PLUS</strong> TECH
+      </S.Title>
 
       <S.Form onSubmit={handleLogin}>
-        <S.UserInput value={user} onChange={e => setUser(e.target.value)} placeholder="Usuário"/>
-        <S.PasswordInput value={password} onChange={ e => setPassword(e.target.value)} placeholder="Senha"/>
+        <S.UserInput
+          value={user}
+          onChange={e => setUser(e.target.value)}
+          placeholder="Usuário"
+        />
+        <S.PasswordInput
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          placeholder="Senha"
+        />
 
-        {error && <Alert text={error} kind='error'/>}
+        {error && <Alert text={error} kind="error" />}
 
-        <Button type="primary" htmlType="submit" >Entrar</Button>
+        <Button type="primary" htmlType="submit">
+          Entrar
+        </Button>
       </S.Form>
     </S.Container>
   )
