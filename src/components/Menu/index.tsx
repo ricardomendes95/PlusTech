@@ -14,7 +14,7 @@ import { routes } from '../../routes'
 import * as S from './styles'
 
 interface MenuProps {
-  active?: 'home' | 'settings' | 'moving' | 'none'
+  active?: 'home' | 'settings' | 'movement' | 'none'
 }
 
 export const Menu: React.FC<MenuProps> = ({ active = 'none', children }) => {
@@ -41,8 +41,8 @@ export const Menu: React.FC<MenuProps> = ({ active = 'none', children }) => {
           </Link>
         </S.MenuItem>
 
-        <S.MenuItem active={active === 'moving'}>
-          <Link to={{ pathname: routes.home, state: { open } }}>
+        <S.MenuItem active={active === 'movement'}>
+          <Link to={{ pathname: routes.movement, state: { open } }}>
             <AiOutlineSwap size={50} />
             {open && <span>Movimentação</span>}
           </Link>
