@@ -6,6 +6,7 @@ import {
   AiOutlineMenuFold,
   AiOutlineSwap,
   AiOutlineSetting,
+  AiOutlineLogout,
 } from 'react-icons/ai'
 import { Link, useLocation } from 'react-router-dom'
 import { routes } from '../../routes'
@@ -56,7 +57,7 @@ export const Menu: React.FC<MenuProps> = ({ active = 'none', children }) => {
 
         <S.MenuItem active={false}>
           <Link to={{ pathname: routes.login, state: { open } }}>
-            <AiOutlineSetting size={50} />
+            <AiOutlineLogout size={50} />
             {open && <span>Sair</span>}
           </Link>
         </S.MenuItem>

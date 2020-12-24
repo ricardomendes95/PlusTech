@@ -1,8 +1,10 @@
 import React, { FormEvent, useState } from 'react'
+import { AiOutlineCheck, AiOutlineEdit } from 'react-icons/ai'
+import { GiCancel } from 'react-icons/gi'
 import { useHistory } from 'react-router-dom'
 import { Definitions } from '../../core/types'
 import { routes } from '../../routes'
-import { PoolService } from '../../services'
+// import { PoolService } from '../../services'
 
 import * as S from './styles'
 
@@ -11,13 +13,16 @@ export default function Pool() {
 
   const [inputMode, setInputMode] = useState(0)
   const [inputValue, setInputValue] = useState('')
-  const [pools, setPools] = useState<Array<Definitions['Pool']>>([])
+  const [pools, setPools] = useState<Array<Definitions['Pool']>>([
+    { id: 2, name: 'centro' },
+  ])
 
   async function createPool() {
     try {
-      const { pool } = await PoolService.create(inputValue)
+      // const { pool } = await PoolService.create(inputValue)
+      const pool = { id: 1, name: inputValue }
 
-      console.log('Croiu pooollll', pool)
+      console.log('Criu pooollll', pool)
 
       setPools(prevState => [...prevState, pool])
       setInputMode(0)
@@ -78,7 +83,9 @@ export default function Pool() {
                   autoFocus
                 />
 
-                <button type="submit"></button>
+                <button type="submit">
+                  <AiOutlineCheck size={30} color="green" />
+                </button>
               </form>
             ) : (
               <a onClick={() => handlePool(pool.id)}>
@@ -87,9 +94,13 @@ export default function Pool() {
             )}
 
             {pool.id !== inputMode ? (
-              <a onClick={() => handleEditPool(pool)}>Editar</a>
+              <a onClick={() => handleEditPool(pool)}>
+                <AiOutlineEdit size={30} />
+              </a>
             ) : (
-              <a onClick={handleCancelCreate}>Cancelar</a>
+              <a onClick={handleCancelCreate}>
+                <GiCancel size={30} color="red" />
+              </a>
             )}
           </S.PoolCard>
         ))}
