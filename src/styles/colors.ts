@@ -25,7 +25,7 @@ export const Colors = {
     danger: '#e02020',
     alert: '#fa6400',
     warning: '#ffc001',
-    info: '#0091ff',
+    info: '#1890ff',
     facebook: '#407fbc',
     white: '#fff',
     black: '#000',

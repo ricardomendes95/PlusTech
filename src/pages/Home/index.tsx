@@ -18,6 +18,8 @@ import { routes } from '../../routes'
 export default function Home() {
   const history = useHistory()
 
+  console.log('PoolId', window.localStorage.getItem('poolId'))
+
   const [toggleActive, setToggleActive] = useState<ToggleActiveTypes>('active')
 
   const columns = [

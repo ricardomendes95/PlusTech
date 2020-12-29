@@ -13,5 +13,6 @@ routes.post('/login', AuthController.login)
  */
 routes.get('/pools', PoolController.index)
 routes.post('/pools', PoolController.create)
+routes.put('/pools/:id', PoolController.update)
 
 export default routes

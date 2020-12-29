@@ -79,7 +79,7 @@ export const PoolCard = styled.div`
   }
 `
 
-export const EditCancelButton = styled.a`
+export const EditCancelButton = styled.button`
   padding: 0px 12px;
   height: 100%;
   border-top-right-radius: 8px;
@@ -88,6 +88,10 @@ export const EditCancelButton = styled.a`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  background-color: ${Colors.base.secondary.tint300};
+  border: none;
+  cursor: pointer;
 
   :hover {
     background-color: ${Colors.base.secondary.tint400};
