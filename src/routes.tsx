@@ -15,7 +15,7 @@ export const routes = {
   newContributor: '/contributor/new',
   pool: '/pool',
   movement: '/movement',
-  newMovement: '/new',
+  newMovement: '/movement/new',
 }
 
 const Routes: React.FC = () => {
@@ -27,8 +27,8 @@ const Routes: React.FC = () => {
         <Route path={routes.settings} component={Settings} />
         <Route path={routes.newContributor} component={NewContributor} />
         <Route path={routes.pool} component={Pool} />
-        <Route path={routes.movement} component={Movement} />
         <Route path={routes.newMovement} component={NewMovement} />
+        <Route path={routes.movement} component={Movement} />
       </Switch>
     </HashRouter>
   )
