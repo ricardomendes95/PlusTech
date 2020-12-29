@@ -22,9 +22,6 @@ function createWindow() {
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:4000')
   } else {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    // const server = require('../backend/src/server')
-    // server.start()
     start()
     mainWindow.loadURL(
       url.format({
