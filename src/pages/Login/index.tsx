@@ -27,7 +27,8 @@ export default function Login() {
 
       history.push(routes.pool)
     } catch (error) {
-      setError(error)
+      console.log('Error', error)
+      // setError(error)
     }
   }
 
