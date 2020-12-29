@@ -1,6 +1,5 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 import { AiOutlineCheck, AiOutlineEdit } from 'react-icons/ai'
-import { GiCancel } from 'react-icons/gi'
 import { useHistory } from 'react-router-dom'
 import { Definitions } from '../../core/types'
 import { routes } from '../../routes'
@@ -85,17 +84,17 @@ export default function Pool() {
         {pools.map(pool => (
           <S.PoolCard key={pool.id}>
             {inputMode === pool.id ? (
-              <form onSubmit={e => handleSubmit(e, pool.id)}>
-                <input
+              <S.Form onSubmit={e => handleSubmit(e, pool.id)}>
+                <S.Input
                   value={inputValue}
                   onChange={e => setInputValue(e.target.value)}
                   autoFocus
                 />
 
-                <button type="submit">
-                  <AiOutlineCheck size={30} color="green" />
-                </button>
-              </form>
+                <S.SaveButton type="submit">
+                  <AiOutlineCheck size={30} color="#1890ff" />
+                </S.SaveButton>
+              </S.Form>
             ) : (
               <a onClick={() => handlePool(pool.id)}>
                 <span>{pool.name}</span>
@@ -103,13 +102,13 @@ export default function Pool() {
             )}
 
             {pool.id !== inputMode ? (
-              <a onClick={() => handleEditPool(pool)}>
+              <S.EditCancelButton onClick={() => handleEditPool(pool)}>
                 <AiOutlineEdit size={30} />
-              </a>
+              </S.EditCancelButton>
             ) : (
-              <a onClick={handleCancelCreate}>
-                <GiCancel size={30} color="red" />
-              </a>
+              <S.EditCancelButton onClick={handleCancelCreate}>
+                <strong>X</strong>
+              </S.EditCancelButton>
             )}
           </S.PoolCard>
         ))}
