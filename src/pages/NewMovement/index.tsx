@@ -14,12 +14,12 @@ export default function NewMovement() {
   const [id, setId] = useState<number>()
   const [name, setName] = useState<string>()
   const [dateAdmission] = useState<Date | null>(new Date())
-  const [email, setEmail] = useState<string>()
+  const [leader, setLeader] = useState<string>()
   const [wallet, setWallet] = useState<string>()
 
   function handleSave() {
     // event.preventDefault()
-    console.log(id, name, email, wallet, dateAdmission)
+    console.log(id, name, leader, wallet, dateAdmission)
   }
   return (
     <S.Container>
@@ -58,15 +58,14 @@ export default function NewMovement() {
             <h2>Bônus</h2>
             <hr />
             <Row gutter={[16, 0]}>
-              <Col sm={6} md={6} lg={4} xl={3}>
-                {/* <Label htmlFor="">Lider de equipe</label> */}
-              </Col>
               <Col sm={14} md={10} lg={12} xl={11}>
-                <Input
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="Ex: João@email.com"
-                />
+                <Form.Item label="Lider de Equipe" name="lider">
+                  <Input
+                    value={leader}
+                    onChange={e => setLeader(e.target.value)}
+                    placeholder="R$ 0,00"
+                  />
+                </Form.Item>
               </Col>
             </Row>
             <Row>
