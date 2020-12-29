@@ -1,10 +1,10 @@
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import { AiOutlineCheck, AiOutlineEdit } from 'react-icons/ai'
 import { GiCancel } from 'react-icons/gi'
 import { useHistory } from 'react-router-dom'
 import { Definitions } from '../../core/types'
 import { routes } from '../../routes'
-// import { PoolService } from '../../services'
+import { PoolService } from '../../services'
 
 import * as S from './styles'
 
@@ -13,18 +13,23 @@ export default function Pool() {
 
   const [inputMode, setInputMode] = useState(0)
   const [inputValue, setInputValue] = useState('')
-  const [pools, setPools] = useState<Array<Definitions['Pool']>>([
-    { id: 2, name: 'centro' },
-  ])
+  const [pools, setPools] = useState<Array<Definitions['Pool']>>([])
+
+  async function loadPools() {
+    try {
+      const { data } = await PoolService.getAll()
+
+      setPools(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async function createPool() {
     try {
-      // const { pool } = await PoolService.create(inputValue)
-      const pool = { id: 1, name: inputValue }
+      const { data: pool } = await PoolService.create(inputValue)
 
-      console.log('Criu pooollll', pool)
-
-      setPools(prevState => [...prevState, pool])
+      setPools(prevState => [...prevState, pool].filter(p => p.id !== 0))
       setInputMode(0)
       setInputValue('')
     } catch (error) {
@@ -67,6 +72,10 @@ export default function Pool() {
     setInputValue('')
     setInputMode(0)
   }
+
+  useEffect(() => {
+    loadPools()
+  }, [])
 
   return (
     <S.Container>

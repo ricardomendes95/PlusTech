@@ -5,7 +5,6 @@ import installExtension, {
   REACT_DEVELOPER_TOOLS,
   REDUX_DEVTOOLS,
 } from 'electron-devtools-installer'
-import { start } from '../backend/src/server'
 
 let mainWindow: Electron.BrowserWindow | null
 
@@ -22,7 +21,9 @@ function createWindow() {
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:4000')
   } else {
-    start()
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const server = require('../backend/src/server')
+    server.start()
     mainWindow.loadURL(
       url.format({
         pathname: path.join(__dirname, 'renderer/index.html'),
