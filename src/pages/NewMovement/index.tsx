@@ -11,24 +11,29 @@ export interface PoolTypes {
 }
 
 export default function NewMovement() {
-  const [id, setId] = useState<number>()
+  const [id] = useState<number>()
   const [name, setName] = useState<string>()
-  const [dateAdmission] = useState<Date | null>(new Date())
+  const [salary, setSalary] = useState<string>()
   const [leader, setLeader] = useState<string>()
-  const [wallet, setWallet] = useState<string>()
+  const [bonus, setBonus] = useState<string>()
+  const [goal, setGoal] = useState<string>()
+  const [rent, setRent] = useState<string>()
+  const [taxi, setTaxi] = useState<string>()
+  const [fine, setFine] = useState<string>()
+  const [total] = useState<string>('R$12.00,00')
 
   function handleSave() {
     // event.preventDefault()
-    console.log(id, name, leader, wallet, dateAdmission)
+    console.log(id, name, leader, bonus)
   }
   return (
     <S.Container>
       <Menu active="home">
-        <Header text="Novo Colaborador" showBackButton />
+        <Header text="Novo Pagamento" showBackButton />
         <S.Content>
           <Form layout="vertical" onFinish={handleSave}>
             <Row>
-              <Col sm={20} md={20} lg={20} xl={16}>
+              <Col sm={10} md={10} lg={10} xl={16}>
                 <Form.Item
                   label="Nome"
                   name="Nome"
@@ -48,17 +53,18 @@ export default function NewMovement() {
               <Col sm={10} md={6} lg={5} xl={5}>
                 <Form.Item label="Salário">
                   <Input
-                    value={id}
-                    onChange={e => setId(Number(e.target.value))}
+                    value={salary}
+                    onChange={e => setSalary(e.target.value)}
                     placeholder="1.500,00"
                   />
                 </Form.Item>
               </Col>
             </Row>
             <h2>Bônus</h2>
-            <hr />
+            <S.Divider />
+
             <Row gutter={[16, 0]}>
-              <Col sm={14} md={10} lg={12} xl={11}>
+              <Col sm={10} md={6} lg={5} xl={5}>
                 <Form.Item label="Lider de Equipe" name="lider">
                   <Input
                     value={leader}
@@ -67,27 +73,65 @@ export default function NewMovement() {
                   />
                 </Form.Item>
               </Col>
-            </Row>
-            <Row>
-              <Col sm={20} md={20} lg={20} xl={16}>
-                <Form.Item
-                  label="Carteira"
-                  name="Carteira"
-                  rules={[
-                    {
-                      max: 50,
-                      message: 'Valor não pode ser maior que 50 caracters',
-                    },
-                  ]}
-                >
+              <Col sm={10} md={6} lg={5} xl={5}>
+                <Form.Item label="Bônus de Grupo" name="bonus">
                   <Input
-                    value={wallet}
-                    onChange={e => setWallet(e.target.value)}
-                    placeholder="12f1241s12..."
-                    maxLength={50}
+                    value={bonus}
+                    onChange={e => setBonus(e.target.value)}
+                    placeholder="R$ 0,00"
                   />
                 </Form.Item>
               </Col>
+
+              <Col sm={10} md={6} lg={5} xl={5}>
+                <Form.Item label="Meta Pessoal" name="goal">
+                  <Input
+                    value={goal}
+                    onChange={e => setGoal(e.target.value)}
+                    placeholder="R$ 0,00"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <h2>Auxilio</h2>
+            <S.Divider />
+
+            <Row gutter={[16, 0]}>
+              <Col sm={10} md={6} lg={5} xl={5}>
+                <Form.Item label="Aluguel" name="rent">
+                  <Input
+                    value={rent}
+                    onChange={e => setRent(e.target.value)}
+                    placeholder="R$ 0,00"
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col sm={10} md={6} lg={5} xl={5}>
+                <Form.Item label="Táxi" name="taxi">
+                  <Input
+                    value={taxi}
+                    onChange={e => setTaxi(e.target.value)}
+                    placeholder="R$ 0,00"
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col sm={10} md={6} lg={5} xl={5}>
+                <Form.Item label="Multas" name="fine">
+                  <Input
+                    value={fine}
+                    onChange={e => setFine(e.target.value)}
+                    placeholder="R$ 0,00"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <span>
+                Total: <strong>{total}</strong>
+              </span>
             </Row>
             <Row>
               <Col

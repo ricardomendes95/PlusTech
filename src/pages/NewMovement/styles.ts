@@ -29,3 +29,6 @@ export const Row = styled.div`
   align-items: center;
   /* margin-top: 10px; */
 `
+export const Divider = styled.hr`
+  margin-bottom: 20px;
+`
