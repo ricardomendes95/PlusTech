@@ -55,7 +55,6 @@ class PoolController {
 
       return response.send()
     } catch (error) {
-      console.log(error)
       return response.status(500).json({ error })
     }
   }
