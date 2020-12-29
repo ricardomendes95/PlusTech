@@ -27,7 +27,7 @@ export const Menu = styled.div<MenuProps>`
   align-items: ${({ open }) => (open ? 'flex-start' : 'center')};
   padding-top: 20px;
   list-style: none;
-  transition: 0.6s;
+  transition: 0.1s;
   z-index: 1000;
 
   li:first-child {

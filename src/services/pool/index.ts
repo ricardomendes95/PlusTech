@@ -8,3 +8,7 @@ export function getAll() {
 export function create(name: string) {
   return api.post<CreatePoolResponse>('/pools', { name })
 }
+
+export function edit(id: number, name: string) {
+  return api.put<void>(`/pools/${id}`, { name })
+}

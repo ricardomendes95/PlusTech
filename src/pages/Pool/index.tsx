@@ -13,8 +13,11 @@ export default function Pool() {
   const [inputMode, setInputMode] = useState(0)
   const [inputValue, setInputValue] = useState('')
   const [pools, setPools] = useState<Array<Definitions['Pool']>>([])
+  const [loading, setLoading] = useState(false)
 
   async function loadPools() {
+    setLoading(true)
+
     try {
       const { data } = await PoolService.getAll()
 
@@ -22,6 +25,8 @@ export default function Pool() {
     } catch (error) {
       console.log(error)
     }
+
+    setLoading(false)
   }
 
   async function createPool() {
@@ -36,8 +41,30 @@ export default function Pool() {
     }
   }
 
+  async function editPool(id: number) {
+    setLoading(true)
+    try {
+      setPools(prevState =>
+        prevState.map(p => {
+          if (p.id === id) {
+            p.name = inputValue
+          }
+
+          return p
+        }),
+      )
+      setInputMode(0)
+      setInputValue('')
+
+      await PoolService.edit(id, inputValue)
+    } catch (error) {
+      console.log('Erro ao editar pool', error)
+    }
+    setLoading(false)
+  }
+
   function handlePool(poolId: number) {
-    console.log('Pool escolhido', poolId)
+    window.localStorage.setItem('poolId', String(poolId))
     history.push(routes.home)
   }
 
@@ -50,7 +77,7 @@ export default function Pool() {
     e.preventDefault()
 
     if (poolId !== 0) {
-      console.log('Edit pool')
+      editPool(poolId)
     } else {
       createPool()
     }
@@ -64,6 +91,8 @@ export default function Pool() {
         name: '',
       },
     ])
+    setInputMode(0)
+    setInputValue('')
   }
 
   function handleCancelCreate() {
@@ -91,7 +120,7 @@ export default function Pool() {
                   autoFocus
                 />
 
-                <S.SaveButton type="submit">
+                <S.SaveButton type="submit" disabled={loading}>
                   <AiOutlineCheck size={30} color="#1890ff" />
                 </S.SaveButton>
               </S.Form>
@@ -102,11 +131,17 @@ export default function Pool() {
             )}
 
             {pool.id !== inputMode ? (
-              <S.EditCancelButton onClick={() => handleEditPool(pool)}>
-                <AiOutlineEdit size={30} />
+              <S.EditCancelButton
+                onClick={() => handleEditPool(pool)}
+                disabled={loading}
+              >
+                <AiOutlineEdit size={30} color="#1890ff" />
               </S.EditCancelButton>
             ) : (
-              <S.EditCancelButton onClick={handleCancelCreate}>
+              <S.EditCancelButton
+                onClick={handleCancelCreate}
+                disabled={loading}
+              >
                 <strong>X</strong>
               </S.EditCancelButton>
             )}
