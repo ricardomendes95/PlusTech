@@ -35,12 +35,18 @@ module.exports = {
 
       email: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
 
       wallet: {
         type: Sequelize.STRING(50),
+        allowNull: true,
+      },
+
+      enabled: {
+        type: Sequelize.BOOLEAN,
         allowNull: false,
+        defaultValue: true,
       },
 
       created_at: {
