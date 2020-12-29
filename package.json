@@ -17,7 +17,7 @@
     "package": "npm-run-all build package:dist",
     "package:dist": "electron-builder --dir",
     "test": "jest",
-    "rebuild": "electron-rebuild -f -w sqlite3"
+    "rebuild": "electron-rebuild -f -w mysql2"
   },
   "keywords": [],
   "author": "Ricardo Felipe <ricardo.felipe.dev@gmail.com>",
@@ -84,6 +84,7 @@
     "antd": "^4.9.4",
     "axios": "^0.21.1",
     "css-loader": "^5.0.1",
+    "mysql2": "^2.2.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-icons": "^4.1.0",

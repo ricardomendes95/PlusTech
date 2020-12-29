@@ -1,5 +1,5 @@
 import { Definitions } from '../../core/types'
 
-export interface CreatePoolResponse {
-  pool: Definitions['Pool']
-}
+export type CreatePoolResponse = Definitions['Pool']
+
+export type GetPoolsResponse = Array<Definitions['Pool']>
