@@ -104,7 +104,7 @@ export default function Movement() {
   }
 
   function handleNewContributor() {
-    history.push(routes.newContributor)
+    history.push(routes.newMovement)
   }
 
   function printDoc(id: number) {
