@@ -1793,6 +1793,13 @@ performance-now@^2.1.0:
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
+pg-hstore@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/pg-hstore/-/pg-hstore-2.3.3.tgz#d1978c12a85359830b1388d3b0ff233b88928e96"
+  integrity sha512-qpeTpdkguFgfdoidtfeTho1Q1zPVPbtMHgs8eQ+Aan05iLmIs3Z3oo5DOZRclPGoQ4i68I1kCtQSJSa7i0ZVYg==
+  dependencies:
+    underscore "^1.7.0"
+
 picomatch@^2.0.4, picomatch@^2.2.1:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.2.2.tgz#21f333e9b6b8eaff02468f5146ea406d345f4dad"
@@ -2411,6 +2418,11 @@ undefsafe@^2.0.3:
   integrity sha512-nrXZwwXrD/T/JXeygJqdCO6NZZ1L66HrxM/Z7mIq2oPanoN0F1nLx3lwJMu6AwJY69hdixaFQOuoYsMjE5/C2A==
   dependencies:
     debug "^2.2.0"
+
+underscore@^1.7.0:
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.12.0.tgz#4814940551fc80587cef7840d1ebb0f16453be97"
+  integrity sha512-21rQzss/XPMjolTiIezSu3JAjgagXKROtNrYFEOWK109qY1Uv2tVjPTZ1ci2HgvQDA16gHYSthQIJfB+XId/rQ==
 
 unique-string@^2.0.0:
   version "2.0.0"
