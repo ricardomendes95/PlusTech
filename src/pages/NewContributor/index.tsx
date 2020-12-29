@@ -34,7 +34,6 @@ export default function NewContributor() {
     { id: 2, name: 'pool 2' },
     { id: 3, name: 'pool 3' },
   ]
-  setId(1)
 
   function handleSelectPool(value: string) {
     const idPool = poolsOptions.find(opt => opt.name === value)?.id || null
@@ -54,7 +53,11 @@ export default function NewContributor() {
             <Row gutter={[16, 0]}>
               <Col sm={10} md={6} lg={5} xl={5}>
                 <Form.Item label="Matricula">
-                  <Input value={id} placeholder="ex: 1" />
+                  <Input
+                    value={id}
+                    onChange={e => setId(Number(e.target.value))}
+                    placeholder="ex: 1"
+                  />
                 </Form.Item>
               </Col>
               <Col sm={10} md={10} lg={8} xl={5}>

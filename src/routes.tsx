@@ -6,6 +6,7 @@ import NewContributor from './pages/NewContributor'
 import Settings from './pages/Settings'
 import Pool from './pages/Pool'
 import Movement from './pages/Movement'
+import NewMovement from './pages/NewMovement'
 
 export const routes = {
   login: '/',
@@ -14,6 +15,7 @@ export const routes = {
   newContributor: '/contributor/new',
   pool: '/pool',
   movement: '/movement',
+  newMovement: '/new',
 }
 
 const Routes: React.FC = () => {
@@ -26,6 +28,7 @@ const Routes: React.FC = () => {
         <Route path={routes.newContributor} component={NewContributor} />
         <Route path={routes.pool} component={Pool} />
         <Route path={routes.movement} component={Movement} />
+        <Route path={routes.newMovement} component={NewMovement} />
       </Switch>
     </HashRouter>
   )
