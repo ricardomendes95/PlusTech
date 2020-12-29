@@ -13,4 +13,13 @@ export interface Definitions {
     id: number
     name: string
   }
+  Contributor: {
+    id?: number
+    poolId?: number
+    name?: string
+    admissionDate?: Date
+    email?: string
+    wallet?: string
+    enabled?: boolean
+  }
 }
