@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SearchTypes, ToggleActiveTypes } from '../../components/HeaderContent'
 import { HeaderContent, Menu, Header } from '../../components'
 import { Table, Space } from 'antd'
@@ -14,11 +14,22 @@ import { GiCancel } from 'react-icons/gi'
 import * as S from './styles'
 import { useHistory } from 'react-router-dom'
 import { routes } from '../../routes'
+import { ContributorService } from '../../services'
+import { Definitions } from '../../core/types'
+
+interface LoadContributorsParams {
+  name?: string
+  startDate?: string
+  endDate?: string
+}
 
 export default function Home() {
   const history = useHistory()
+  const [contributors, setContributors] = useState<
+    Definitions['Contributor'][]
+  >([])
 
-  console.log('PoolId', window.localStorage.getItem('poolId'))
+  const poolId = Number(window.localStorage.getItem('poolId'))
 
   const [toggleActive, setToggleActive] = useState<ToggleActiveTypes>('active')
 
@@ -35,8 +46,8 @@ export default function Home() {
     },
     {
       title: 'Data de Admissão',
-      dataIndex: 'dateAdmission',
-      key: 'dateAdmission',
+      dataIndex: 'admissionDate',
+      key: 'admissionDate',
     },
 
     {
@@ -64,27 +75,27 @@ export default function Home() {
     },
   ]
 
-  const data = [
-    {
-      id: 1,
-      name: 'John Brown',
-      dateAdmission: '24/12/2020',
-    },
-    {
-      id: 2,
-      name: 'Jim Green',
-      dateAdmission: '22/12/202',
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
-    },
-    {
-      id: 3,
-      name: 'Joe Black',
-      dateAdmission: '22/12/202',
-      address: 'Sidney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
-    },
-  ]
+  async function loadContributors({
+    name,
+    startDate,
+    endDate,
+  }: LoadContributorsParams) {
+    try {
+      const { data } = await ContributorService.getAll({
+        poolId,
+        params: {
+          enabled: toggleActive === 'active',
+          name,
+          startDate,
+          endDate,
+        },
+      })
+
+      setContributors(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   function update(id: number) {
     console.log('send update colaboration:', id)
@@ -99,8 +110,17 @@ export default function Home() {
   }
 
   function handleSearch(value: string | Date[], searchType: SearchTypes) {
-    console.log('value', value)
-    console.log('searchType', searchType)
+    if (searchType === 'name') {
+      loadContributors({ name: value as string })
+    } else {
+      const [startDate, endDate] = value as Date[]
+      console.log(startDate, endDate)
+
+      loadContributors({
+        startDate: startDate.toString(),
+        endDate: endDate.toString(),
+      })
+    }
   }
 
   function handleToggleActive(toggleActive: ToggleActiveTypes) {
@@ -110,6 +130,10 @@ export default function Home() {
   function handleNewContributor() {
     history.push(routes.newContributor)
   }
+
+  useEffect(() => {
+    loadContributors({})
+  }, [toggleActive])
 
   return (
     <Menu active="home">
@@ -124,7 +148,7 @@ export default function Home() {
           <Table
             columns={columns}
             rowKey="id"
-            dataSource={data}
+            dataSource={contributors}
             pagination={{ position: ['bottomCenter'], hideOnSinglePage: true }}
             scroll={{ y: 300, x: '100%' }}
           />

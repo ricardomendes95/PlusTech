@@ -32,7 +32,7 @@ export const HeaderContent = ({
   function handleDateChange(e: any) {
     const dates: Array<Date> = []
 
-    e?.forEach((date: any) => dates.push(new Date(date.toLocaleString())))
+    e?.forEach((date: any) => dates.push(new Date(date.toDate())))
 
     if (onSearch) onSearch(dates, 'date')
   }

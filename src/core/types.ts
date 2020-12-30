@@ -14,7 +14,7 @@ export interface Definitions {
     name: string
   }
   Contributor: {
-    id?: number
+    id: number
     poolId?: number
     name?: string
     admissionDate?: Date
