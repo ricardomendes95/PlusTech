@@ -91,8 +91,51 @@ class PaymentController {
 
       return response.status(201).json(payment)
     } catch (error) {
-      console.log(error)
       return response.status(500).json({ error })
+    }
+  }
+
+  async disable(request: Request, response: Response) {
+    const { id } = request.params
+
+    try {
+      const payment = await Payment.findByPk(id)
+
+      if (!payment) {
+        return response.status(404).json({
+          error: 'Pagamento não encontrado',
+        })
+      }
+
+      payment.enabled = false
+
+      await payment.save()
+
+      return response.send()
+    } catch (error) {
+      return response.status(500).json(error)
+    }
+  }
+
+  async enable(request: Request, response: Response) {
+    const { id } = request.params
+
+    try {
+      const payment = await Payment.findByPk(id)
+
+      if (!payment) {
+        return response.status(404).json({
+          error: 'Pagamento não encontrado',
+        })
+      }
+
+      payment.enabled = true
+
+      await payment.save()
+
+      return response.send()
+    } catch (error) {
+      return response.status(500).json(error)
     }
   }
 }
