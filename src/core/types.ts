@@ -28,7 +28,7 @@ export interface Definitions {
     enabled?: boolean
   }
   Contributor: {
-    id?: number
+    id: number
     poolId?: number
     name?: string
     admissionDate?: Date

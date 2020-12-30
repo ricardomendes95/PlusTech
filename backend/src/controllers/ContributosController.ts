@@ -1,16 +1,32 @@
 import { Request, Response } from 'express'
-import { FindOptions } from 'sequelize/types'
+import { Op, WhereOptions } from 'sequelize'
+
 import { Contributor } from '../models'
+import { ContributorAttributes } from '../models/Contributor'
 
 class ContributorController {
   async index(request: Request, response: Response) {
+    const { enabled, name, startDate, endDate } = request.query
+    console.log(enabled, name, startDate, endDate)
+
     try {
-      const options: FindOptions<Contributor> = {
-        where: {
-          poolId: Number(request.params.poolId) || 0,
-        },
+      const where: WhereOptions<ContributorAttributes> = {
+        poolId: Number(request.params.poolId) || 0,
+        enabled: enabled === 'true',
       }
-      const pools = await Contributor.findAll(options)
+
+      if (name) {
+        where.name = { [Op.like]: `%${name}%` }
+      }
+
+      if (startDate && endDate) {
+        const start = new Date(startDate.toString())
+        const end = new Date(endDate.toString())
+
+        where.admissionDate = { [Op.between]: [start, end] }
+      }
+
+      const pools = await Contributor.findAll({ where })
 
       return response.json(pools)
     } catch (error) {
