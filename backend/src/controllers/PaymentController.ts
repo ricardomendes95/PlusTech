@@ -9,7 +9,13 @@ import { PaymentAttributes } from '../models/Payment'
 class PaymentController {
   async index(request: Request, response: Response) {
     const poolId = Number(request.params.poolId) || 0
-    const { enabled = 'true', contributor, startDate, endDate } = request.query
+    const {
+      enabled = 'true',
+      orderBy = '0',
+      contributor,
+      startDate,
+      endDate,
+    } = request.query
 
     const where: WhereOptions<PaymentAttributes> = {
       poolId,
@@ -36,6 +42,7 @@ class PaymentController {
     try {
       const payments = await Payment.findAll({
         where,
+        order: [['createdAt', orderBy.toString() === '0' ? 'DESC' : 'ASC']],
         include: [
           {
             // @ts-ignore
