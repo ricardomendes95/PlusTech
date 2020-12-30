@@ -8,13 +8,18 @@ import CurrencyInput from 'react-currency-input'
 
 import * as S from './styles'
 import { Definitions } from '../../core/types'
-import { PaymentService } from '../../services'
+import { ContributorService, PaymentService } from '../../services'
 import { routes } from '../../routes'
 import { useHistory } from 'react-router-dom'
 
 interface CurrencyState {
   mask: string
   value: number
+}
+
+interface AutoCompleteType {
+  value: string
+  id: number
 }
 
 export default function NewPayment() {
@@ -35,41 +40,40 @@ export default function NewPayment() {
     value: 0,
   })
 
-  const [autoCompleteOptions] = useState([
-    {
-      value: '1 - Joao da Silva',
-      id: 1,
-    },
-    {
-      value: '2 - Maria de Lourdes',
-      id: 2,
-    },
-  ])
+  const [autoCompleteOptions, setAutoCompleteOptions] = useState<
+    AutoCompleteType[]
+  >([])
   const [autoCompleteValue, setAutoCompleteValue] = useState('')
   const [contributor, setContributor] = useState<
     Definitions['Contributor'] | undefined
   >()
 
-  const [contributors] = useState<Definitions['Contributor'][]>([
-    {
-      id: 1,
-      poolId: 1,
-      name: 'Joao da Silva',
-      admissionDate: new Date('2020-01-01T01:01:01.000Z'),
-      email: 'joaodasilva@email.com',
-      wallet: 'my-wallet-key',
-      enabled: true,
-    },
-    {
-      id: 2,
-      poolId: 1,
-      name: 'Maria de Lourdes',
-      admissionDate: new Date('2020-01-01T01:01:01.000Z'),
-      email: 'mariadelourdes@email.com',
-      wallet: 'my-wallet-key',
-      enabled: true,
-    },
-  ])
+  const [contributors, setContributors] = useState<
+    Definitions['Contributor'][]
+  >([])
+
+  async function loadContributors(name = '') {
+    try {
+      const response = await ContributorService.getAll({
+        poolId,
+        params: { name, enabled: true },
+      })
+
+      const options: AutoCompleteType[] = []
+
+      response.data.forEach(c => {
+        options.push({
+          id: c.id,
+          value: `${c.id} - ${c.name}`,
+        })
+      })
+
+      setContributors(response.data)
+      setAutoCompleteOptions(options)
+    } catch (error) {
+      console.log('[loadContributors] Error -', error)
+    }
+  }
 
   function handleSearch(searchText: string) {
     // Buscar novos contribuidores
@@ -129,6 +133,10 @@ export default function NewPayment() {
       }),
     })
   }, [salary, leader, bonus, goal, rent, taxi, fine])
+
+  useEffect(() => {
+    loadContributors(autoCompleteValue)
+  }, [autoCompleteValue])
 
   return (
     <S.Container>

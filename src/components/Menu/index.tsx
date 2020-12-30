@@ -8,7 +8,7 @@ import {
   AiOutlineSetting,
   AiOutlineLogout,
 } from 'react-icons/ai'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { routes } from '../../routes'
 
 import * as S from './styles'
@@ -18,14 +18,22 @@ interface MenuProps {
 }
 
 export const Menu: React.FC<MenuProps> = ({ active = 'none', children }) => {
-  const location = useLocation<{ open: boolean }>()
-  const [open, setOpen] = useState(location.state?.open)
+  const [open, setOpen] = useState(
+    window.localStorage.getItem('open') === 'true',
+  )
+
+  function handleToggleMenu() {
+    setOpen(prevState => {
+      window.localStorage.setItem('open', prevState ? 'false' : 'true')
+      return !prevState
+    })
+  }
 
   return (
     <S.Container>
       <S.Menu open={open}>
         <S.MenuItem active={false}>
-          <a onClick={() => setOpen(prevState => !prevState)}>
+          <a onClick={handleToggleMenu}>
             {open ? (
               <AiOutlineMenuFold size={50} />
             ) : (
@@ -35,28 +43,28 @@ export const Menu: React.FC<MenuProps> = ({ active = 'none', children }) => {
         </S.MenuItem>
 
         <S.MenuItem active={active === 'home'}>
-          <Link to={{ pathname: routes.home, state: { open } }}>
+          <Link to={routes.home}>
             <AiOutlineTeam size={50} />
             {open && <span>Colaborador</span>}
           </Link>
         </S.MenuItem>
 
         <S.MenuItem active={active === 'movement'}>
-          <Link to={{ pathname: routes.payment, state: { open } }}>
+          <Link to={routes.payment}>
             <AiOutlineSwap size={50} />
             {open && <span>Movimentação</span>}
           </Link>
         </S.MenuItem>
 
         <S.MenuItem active={active === 'settings'}>
-          <Link to={{ pathname: routes.settings, state: { open } }}>
+          <Link to={routes.settings}>
             <AiOutlineSetting size={50} />
             {open && <span>Configuração</span>}
           </Link>
         </S.MenuItem>
 
         <S.MenuItem active={false}>
-          <Link to={{ pathname: routes.login, state: { open } }}>
+          <Link to={routes.login}>
             <AiOutlineLogout size={50} />
             {open && <span>Sair</span>}
           </Link>
