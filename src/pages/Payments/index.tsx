@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { SearchTypes, ToggleActiveTypes } from '../../components/HeaderContent'
 import { HeaderContent, Menu, Header } from '../../components'
-import { Table, Space } from 'antd'
+import { Table, Space, Tooltip } from 'antd'
 
 import {
   AiOutlineEdit,
@@ -75,30 +75,42 @@ export default function Movement() {
         <span>{new Date(createdAt).toLocaleDateString('pt-BR')}</span>
       ),
     },
-
     {
       title: 'Ações',
       key: 'action',
       displayName: '21',
-      render: (text: string, record: { id: number }) => (
+      render: (text: string, record: Definitions['Payment']) => (
         <Space size="middle">
-          <S.Action onClick={() => update(record.id)}>
-            <AiOutlineEdit size={20} />
-          </S.Action>
-          <S.Action
-            onClick={() =>
-              toggleActive === 'active' ? disable(record.id) : enable(record.id)
-            }
+          <Tooltip title="Editar" key={record.id}>
+            <S.Action onClick={() => update(record.id)}>
+              <AiOutlineEdit size={20} />
+            </S.Action>
+          </Tooltip>
+
+          <Tooltip
+            title={record.enabled ? 'Inativar' : 'Ativar'}
+            key={record.id}
           >
-            {toggleActive === 'active' ? (
-              <GiCancel size={20} color="red" />
-            ) : (
-              <AiOutlineCheckCircle size={20} color="green" />
-            )}
-          </S.Action>
-          <S.Action onClick={() => printDoc(record.id)}>
-            <AiOutlinePrinter size={20} />
-          </S.Action>
+            <S.Action
+              onClick={() =>
+                record.enabled
+                  ? handleDisable(record.id)
+                  : handleEnable(record.id)
+              }
+            >
+              {record.enabled ? (
+                <GiCancel size={20} color="red" />
+              ) : (
+                <AiOutlineCheckCircle size={20} color="green" />
+              )}
+            </S.Action>
+          </Tooltip>
+
+          <Tooltip title="Imprimir" key={record.id}>
+            <S.Action onClick={() => handlePrintDoc(record.id)}>
+              <AiOutlinePrinter size={20} />
+            </S.Action>
+          </Tooltip>
         </Space>
       ),
     },
@@ -122,12 +134,40 @@ export default function Movement() {
     console.log('send update colaboration:', id)
   }
 
-  function disable(id: number) {
-    console.log('send Delete colaboration:', id)
+  async function handleDisable(id: number) {
+    try {
+      await PaymentService.disable(id)
+
+      setPayments(prevState =>
+        prevState.map(p => {
+          if (p.id === id) {
+            p.enabled = false
+          }
+
+          return p
+        }),
+      )
+    } catch (error) {
+      console.log('[handleDisable] - Error', error)
+    }
   }
 
-  function enable(id: number) {
-    console.log('send enable colaboration:', id)
+  async function handleEnable(id: number) {
+    try {
+      await PaymentService.enable(id)
+
+      setPayments(prevState =>
+        prevState.map(p => {
+          if (p.id === id) {
+            p.enabled = true
+          }
+
+          return p
+        }),
+      )
+    } catch (error) {
+      console.log('[handleEnable] - Error', error)
+    }
   }
 
   function handleSearch(value: string | Date[], searchType: SearchTypes) {
@@ -154,7 +194,7 @@ export default function Movement() {
     history.push(routes.newPayment)
   }
 
-  function printDoc(id: number) {
+  function handlePrintDoc(id: number) {
     console.log('send enable Movement:', id)
   }
 

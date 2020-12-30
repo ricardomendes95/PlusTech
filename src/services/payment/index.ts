@@ -21,3 +21,11 @@ export function create(payment: Definitions['Payment']) {
     payment,
   )
 }
+
+export function enable(id: number) {
+  return api.put<void>(`/payments/${id}/enable`)
+}
+
+export function disable(id: number) {
+  return api.put<void>(`/payments/${id}/disable`)
+}
