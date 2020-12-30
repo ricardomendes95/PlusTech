@@ -92,6 +92,7 @@ export default function NewPayment() {
 
     try {
       await PaymentService.create({
+        id: 0,
         contributorId: contributor.id || 0,
         poolId,
         salary: salary.value,

@@ -1,12 +1,22 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Request, Response } from 'express'
-import { Payment } from '../models'
+import { Contributor, Payment } from '../models'
 
 class PaymentController {
   async index(request: Request, response: Response) {
     try {
       const { poolId } = request.params
 
-      const payments = await Payment.findAll({ where: { poolId } })
+      const payments = await Payment.findAll({
+        where: { poolId },
+        include: [
+          {
+            // @ts-ignore
+            model: Contributor,
+            as: 'contributor',
+          },
+        ],
+      })
 
       return response.json(payments)
     } catch (error) {

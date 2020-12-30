@@ -14,7 +14,7 @@ export interface Definitions {
     name: string
   }
   Payment: {
-    id?: number
+    id: number
     poolId: number
     contributorId: number
     salary?: number
@@ -26,6 +26,7 @@ export interface Definitions {
     fine?: number
     total?: number
     enabled?: boolean
+    contributor?: Definitions['Contributor']
   }
   Contributor: {
     id: number
@@ -35,5 +36,6 @@ export interface Definitions {
     email?: string
     wallet?: string
     enabled?: boolean
+    payments?: Definitions['Payment'][]
   }
 }

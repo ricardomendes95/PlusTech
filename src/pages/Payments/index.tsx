@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SearchTypes, ToggleActiveTypes } from '../../components/HeaderContent'
 import { HeaderContent, Menu, Header } from '../../components'
 import { Table, Space } from 'antd'
@@ -15,32 +15,52 @@ import { GiCancel } from 'react-icons/gi'
 import * as S from './styles'
 import { useHistory } from 'react-router-dom'
 import { routes } from '../../routes'
+import { Definitions } from '../../core/types'
+import { PaymentService } from '../../services'
 
 export default function Movement() {
   const history = useHistory()
 
   const [toggleActive, setToggleActive] = useState<ToggleActiveTypes>('active')
+  const [loadingPayments, setLoadingPayments] = useState(false)
+  const [payments, setPayments] = useState<Definitions['Payment'][]>([])
+
+  const poolId = Number(window.localStorage.getItem('poolId'))
 
   const columns = [
     {
-      title: 'Matricula',
+      title: 'Código',
       dataIndex: 'id',
       key: 'id',
     },
     {
       title: 'Colaborador',
-      dataIndex: 'colaboration',
-      key: 'colaboration',
+      dataIndex: 'contributor',
+      key: 'contributor',
+      render: (contributor: Definitions['Contributor']) => (
+        <span>{contributor.name}</span>
+      ),
     },
     {
       title: 'Valor Total',
       dataIndex: 'total',
       key: 'total',
+      render: (total: string) => (
+        <span>
+          {Number(total).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          })}
+        </span>
+      ),
     },
     {
       title: 'Data',
-      dataIndex: 'date',
-      key: 'date',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (createdAt: string) => (
+        <span>{new Date(createdAt).toLocaleDateString('pt-BR')}</span>
+      ),
     },
 
     {
@@ -71,15 +91,18 @@ export default function Movement() {
     },
   ]
 
-  const data = []
+  async function loadPayments() {
+    setLoadingPayments(true)
 
-  for (let i = 0; i < 9; i++) {
-    data.push({
-      id: i,
-      colaboration: 'John Brown',
-      total: 'R$8.300,00',
-      date: '24/12/2020',
-    })
+    try {
+      const response = await PaymentService.getAll(poolId)
+
+      setPayments(response.data)
+    } catch (error) {
+      console.log('Error', error)
+    }
+
+    setLoadingPayments(false)
   }
 
   function update(id: number) {
@@ -111,6 +134,10 @@ export default function Movement() {
     console.log('send enable Movement:', id)
   }
 
+  useEffect(() => {
+    loadPayments()
+  }, [])
+
   return (
     <Menu active="movement">
       <S.Container>
@@ -124,9 +151,10 @@ export default function Movement() {
           <Table
             columns={columns}
             rowKey="id"
-            dataSource={data}
+            dataSource={payments}
             pagination={{ position: ['bottomCenter'], hideOnSinglePage: true }}
             scroll={{ y: 300, x: '100%' }}
+            loading={loadingPayments}
           />
 
           <S.Footer>
