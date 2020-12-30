@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Input, Row, Form, Col, Button } from 'antd'
+import { Row, Form, Col, Button, AutoComplete } from 'antd'
 import { Menu, Header } from '../../components'
 import 'moment/locale/pt-br'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -7,17 +7,22 @@ import 'moment/locale/pt-br'
 import CurrencyInput from 'react-currency-input'
 
 import * as S from './styles'
+import { Definitions } from '../../core/types'
+import { PaymentService } from '../../services'
+import { routes } from '../../routes'
+import { useHistory } from 'react-router-dom'
 
 interface CurrencyState {
   mask: string
   value: number
 }
 
-export default function NewMovement() {
-  const initialCurrencyState: CurrencyState = { mask: '0.00', value: 0 }
+export default function NewPayment() {
+  const history = useHistory()
 
-  const [id] = useState<number>()
-  const [name, setName] = useState('')
+  const initialCurrencyState: CurrencyState = { mask: '0.00', value: 0 }
+  const poolId = Number(window.localStorage.getItem('poolId'))
+
   const [salary, setSalary] = useState<CurrencyState>(initialCurrencyState)
   const [leader, setLeader] = useState<CurrencyState>(initialCurrencyState)
   const [bonus, setBonus] = useState<CurrencyState>(initialCurrencyState)
@@ -25,11 +30,84 @@ export default function NewMovement() {
   const [rent, setRent] = useState<CurrencyState>(initialCurrencyState)
   const [taxi, setTaxi] = useState<CurrencyState>(initialCurrencyState)
   const [fine, setFine] = useState<CurrencyState>(initialCurrencyState)
-  const [total, setTotal] = useState('')
+  const [total, setTotal] = useState<CurrencyState>({
+    mask: 'R$ 0.00',
+    value: 0,
+  })
 
-  function handleSave() {
-    // event.preventDefault()
-    console.log(id, name, leader, bonus)
+  const [autoCompleteOptions] = useState([
+    {
+      value: '1 - Joao da Silva',
+      id: 1,
+    },
+    {
+      value: '2 - Maria de Lourdes',
+      id: 2,
+    },
+  ])
+  const [autoCompleteValue, setAutoCompleteValue] = useState('')
+  const [contributor, setContributor] = useState<
+    Definitions['Contributor'] | undefined
+  >()
+
+  const [contributors] = useState<Definitions['Contributor'][]>([
+    {
+      id: 1,
+      poolId: 1,
+      name: 'Joao da Silva',
+      admissionDate: new Date('2020-01-01T01:01:01.000Z'),
+      email: 'joaodasilva@email.com',
+      wallet: 'my-wallet-key',
+      enabled: true,
+    },
+    {
+      id: 2,
+      poolId: 1,
+      name: 'Maria de Lourdes',
+      admissionDate: new Date('2020-01-01T01:01:01.000Z'),
+      email: 'mariadelourdes@email.com',
+      wallet: 'my-wallet-key',
+      enabled: true,
+    },
+  ])
+
+  function handleSearch(searchText: string) {
+    // Buscar novos contribuidores
+    console.log('Search for', searchText)
+  }
+
+  function handleSelect(data: string, option: any) {
+    const selectedContributor = contributors.find(c => c.id === option.id)
+
+    setAutoCompleteValue(data)
+    setContributor(selectedContributor)
+  }
+
+  function handleChange(data: string) {
+    setAutoCompleteValue(data)
+  }
+
+  async function handleSave() {
+    if (!contributor) return
+
+    try {
+      await PaymentService.create({
+        contributorId: contributor.id || 0,
+        poolId,
+        salary: salary.value,
+        leader: leader.value,
+        bonus: bonus.value,
+        goal: goal.value,
+        rent: rent.value,
+        taxi: taxi.value,
+        fine: fine.value,
+        total: total.value,
+      })
+
+      history.push(routes.movement)
+    } catch (error) {
+      console.log('Error', error)
+    }
   }
 
   useEffect(() => {
@@ -42,12 +120,13 @@ export default function NewMovement() {
       taxi.value -
       fine.value
 
-    setTotal(
-      value.toLocaleString('pt-BR', {
+    setTotal({
+      value,
+      mask: value.toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL',
       }),
-    )
+    })
   }, [salary, leader, bonus, goal, rent, taxi, fine])
 
   return (
@@ -63,13 +142,19 @@ export default function NewMovement() {
                   label="Nome"
                   name="Nome"
                   rules={[
-                    { required: true, message: 'Por favor, informe um nome!' },
+                    {
+                      required: true,
+                      message: 'Por favor, informe um contribuidor',
+                    },
                   ]}
                 >
-                  <Input
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    placeholder="Ex: João"
+                  <AutoComplete
+                    options={autoCompleteOptions}
+                    value={autoCompleteValue}
+                    placeholder="Contribuidor"
+                    onChange={handleChange}
+                    onSearch={handleSearch}
+                    onSelect={handleSelect}
                   />
                 </Form.Item>
               </Col>
@@ -86,11 +171,6 @@ export default function NewMovement() {
                     prefix="R$ "
                     className="ant-input"
                   />
-                  {/* <Input
-                    value={salary}
-                    onChange={e => setSalary(e.target.value)}
-                    placeholder="1.500,00"
-                  /> */}
                 </Form.Item>
               </Col>
             </Row>
@@ -187,7 +267,7 @@ export default function NewMovement() {
 
             <Row>
               <span>
-                Total: <strong>{total}</strong>
+                Total: <strong>{total.mask}</strong>
               </span>
             </Row>
 

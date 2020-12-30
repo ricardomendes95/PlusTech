@@ -27,4 +27,13 @@ export interface Definitions {
     total?: number
     enabled?: boolean
   }
+  Contributor: {
+    id?: number
+    poolId?: number
+    name?: string
+    admissionDate?: Date
+    email?: string
+    wallet?: string
+    enabled?: boolean
+  }
 }

@@ -9,6 +9,7 @@ export interface ContributorAttributes {
   admissionDate?: Date
   email?: string
   wallet?: string
+  enabled?: boolean
 }
 
 type ContributorCreationAttributes = Optional<ContributorAttributes, 'id'>
@@ -28,6 +29,8 @@ export default class Contributor
 
   public wallet!: string
 
+  public enabled!: boolean
+
   public readonly createdAt!: Date
 
   public readonly updatedAt!: Date
@@ -45,6 +48,7 @@ const dataTypes = {
   admissionDate: DataTypes.DATE,
   email: DataTypes.STRING,
   wallet: DataTypes.STRING,
+  enabled: DataTypes.BOOLEAN,
 }
 
 Contributor.init(dataTypes, options)

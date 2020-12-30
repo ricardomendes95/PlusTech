@@ -21,7 +21,8 @@ import { Definitions } from '../../core/types'
 import { useHistory } from 'react-router-dom'
 import { routes } from '../../routes'
 
-export default function NewContributor() {
+export default function EditContributor() {
+  const [id, setId] = useState(0)
   const [poolId, setPoolId] = useState(window.localStorage.getItem('poolId'))
   const [name, setName] = useState('')
   const [dateAdmission, setDateAdmission] = useState(new Date())
@@ -48,7 +49,6 @@ export default function NewContributor() {
   }
 
   async function handleSave() {
-    // event.preventDefault()
     try {
       const { data: contributor } = await ContributorService.create({
         name,
@@ -78,10 +78,19 @@ export default function NewContributor() {
     <S.Container>
       <Menu active="home">
         <Header text="Novo Colaborador" showBackButton />
-
         <S.Content>
           <Form layout="vertical" onFinish={handleSave}>
             <Row gutter={[16, 0]}>
+              <Col sm={10} md={6} lg={5} xl={5}>
+                <Form.Item label="Matricula">
+                  <Input
+                    value={id}
+                    onChange={e => setId(Number(e.target.value))}
+                    placeholder="ex: 1"
+                  />
+                </Form.Item>
+              </Col>
+
               <Col sm={10} md={8} lg={8} xl={5}>
                 <Form.Item label="Pool">
                   <Select value={String(poolId)} onChange={handleSelectPool}>
@@ -112,7 +121,6 @@ export default function NewContributor() {
                 </Form.Item>
               </Col>
             </Row>
-
             <Row gutter={[16, 0]}>
               <Col sm={6} md={6} lg={4} xl={3}>
                 <Form.Item label="Data de Admissão">
@@ -127,7 +135,6 @@ export default function NewContributor() {
                   </ConfigProvider>
                 </Form.Item>
               </Col>
-
               <Col sm={14} md={10} lg={12} xl={11}>
                 <Form.Item
                   label="E-mail"
@@ -147,7 +154,6 @@ export default function NewContributor() {
                 </Form.Item>
               </Col>
             </Row>
-
             <Row>
               <Col sm={20} md={20} lg={20} xl={16}>
                 <Form.Item
@@ -169,7 +175,6 @@ export default function NewContributor() {
                 </Form.Item>
               </Col>
             </Row>
-
             <Row>
               <Col
                 style={{ display: 'flex', justifyContent: 'flex-end' }}
