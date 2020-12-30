@@ -17,7 +17,13 @@ class ContributorController {
       }
 
       if (name) {
-        where.name = { [Op.like]: `%${name}%` }
+        const where2 = {
+          [Op.or]: [
+            { id: Number(name) || 0 },
+            { name: { [Op.like]: `%${name}%` } },
+          ],
+        }
+        Object.assign(where, where2)
       }
 
       if (startDate && endDate) {

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { SearchTypes, ToggleActiveTypes } from '../../components/HeaderContent'
 import { HeaderContent, Menu, Header } from '../../components'
-import { Table, Space } from 'antd'
+import { Table, Space, notification, Tooltip } from 'antd'
 
 import {
   AiOutlineEdit,
@@ -56,20 +56,26 @@ export default function Home() {
       displayName: '21',
       render: (text: string, record: { id: number }) => (
         <Space size="middle">
-          <S.Action onClick={() => update(record.id)}>
-            <AiOutlineEdit size={20} />
-          </S.Action>
-          <S.Action
-            onClick={() =>
-              toggleActive === 'active' ? disable(record.id) : enable(record.id)
-            }
-          >
-            {toggleActive === 'active' ? (
-              <GiCancel size={20} color="red" />
-            ) : (
-              <AiOutlineCheckCircle size={20} color="green" />
-            )}
-          </S.Action>
+          <Tooltip title="Editar" key={record.id}>
+            <S.Action onClick={() => update(record.id)}>
+              <AiOutlineEdit size={20} />
+            </S.Action>
+          </Tooltip>
+          <Tooltip title="Desativar/Ativar" key={record.id}>
+            <S.Action
+              onClick={() =>
+                toggleActive === 'active'
+                  ? disable(record.id)
+                  : enable(record.id)
+              }
+            >
+              {toggleActive === 'active' ? (
+                <GiCancel size={20} color="red" />
+              ) : (
+                <AiOutlineCheckCircle size={20} color="green" />
+              )}
+            </S.Action>
+          </Tooltip>
         </Space>
       ),
     },
@@ -101,12 +107,34 @@ export default function Home() {
     console.log('send update colaboration:', id)
   }
 
-  function disable(id: number) {
-    console.log('send Delete colaboration:', id)
+  async function disable(id: number) {
+    try {
+      await ContributorService.disable(id)
+      notification.success({
+        message: 'Colaborador Desativado!',
+      })
+      loadContributors({})
+    } catch (error) {
+      notification.success({
+        message: 'Erro ao Desativar!',
+        description: error,
+      })
+    }
   }
 
-  function enable(id: number) {
-    console.log('send enable colaboration:', id)
+  async function enable(id: number) {
+    try {
+      await ContributorService.enable(id)
+      notification.success({
+        message: 'Colaborador Ativado!',
+      })
+      loadContributors({})
+    } catch (error) {
+      notification.success({
+        message: 'Erro ao Ativar!',
+        description: error,
+      })
+    }
   }
 
   function handleSearch(value: string | Date[], searchType: SearchTypes) {
