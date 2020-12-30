@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { SearchTypes, ToggleActiveTypes } from '../../components/HeaderContent'
 import { HeaderContent, Menu, Header } from '../../components'
-import { Table, Space, Tooltip } from 'antd'
+import { Table, Space, Tooltip, notification } from 'antd'
 
 import {
   AiOutlineEdit,
@@ -147,6 +147,9 @@ export default function Movement() {
           return p
         }),
       )
+      notification.success({
+        message: 'Desativado!',
+      })
     } catch (error) {
       console.log('[handleDisable] - Error', error)
     }
@@ -165,6 +168,9 @@ export default function Movement() {
           return p
         }),
       )
+      notification.success({
+        message: 'Desativado!',
+      })
     } catch (error) {
       console.log('[handleEnable] - Error', error)
     }

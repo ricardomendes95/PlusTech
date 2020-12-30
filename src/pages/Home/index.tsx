@@ -22,17 +22,25 @@ interface LoadContributorsParams {
   name?: string
   startDate?: string
   endDate?: string
+  enabled?: boolean
+}
+
+interface Filter {
+  value: string | string[]
+  type: SearchTypes
 }
 
 export default function Home() {
   const history = useHistory()
+
   const [contributors, setContributors] = useState<
     Definitions['Contributor'][]
   >([])
+  const [loadingContributors, setLoadingContributors] = useState(false)
+  const [toggleActive, setToggleActive] = useState<ToggleActiveTypes>('active')
+  const [filter, setFilter] = useState<Filter>({ value: '', type: 'name' })
 
   const poolId = Number(window.localStorage.getItem('poolId'))
-
-  const [toggleActive, setToggleActive] = useState<ToggleActiveTypes>('active')
 
   const columns = [
     {
@@ -57,7 +65,7 @@ export default function Home() {
       title: 'Ações',
       key: 'action',
       displayName: '21',
-      render: (text: string, record: { id: number }) => (
+      render: (text: string, record: Definitions['Contributor']) => (
         <Space size="middle">
           <Tooltip title="Editar" key={record.id}>
             <S.Action onClick={() => update(record.id)}>
@@ -65,17 +73,15 @@ export default function Home() {
             </S.Action>
           </Tooltip>
           <Tooltip
-            title={toggleActive === 'active' ? 'Desativar' : 'Ativar'}
+            title={record.enabled ? 'Desativar' : 'Ativar'}
             key={record.id}
           >
             <S.Action
               onClick={() =>
-                toggleActive === 'active'
-                  ? disable(record.id)
-                  : enable(record.id)
+                record.enabled ? disable(record.id) : enable(record.id)
               }
             >
-              {toggleActive === 'active' ? (
+              {record.enabled ? (
                 <GiCancel size={20} color="red" />
               ) : (
                 <AiOutlineCheckCircle size={20} color="green" />
@@ -87,26 +93,20 @@ export default function Home() {
     },
   ]
 
-  async function loadContributors({
-    name,
-    startDate,
-    endDate,
-  }: LoadContributorsParams) {
+  async function loadContributors(params?: LoadContributorsParams) {
+    setLoadingContributors(true)
+
     try {
-      const { data } = await ContributorService.getAll({
+      const response = await ContributorService.getAll({
         poolId,
-        params: {
-          enabled: toggleActive === 'active',
-          name,
-          startDate,
-          endDate,
-        },
+        params,
       })
 
-      setContributors(data)
+      setContributors(response.data)
     } catch (error) {
       console.log(error)
     }
+    setLoadingContributors(false)
   }
 
   function update(id: number) {
@@ -120,7 +120,15 @@ export default function Home() {
       notification.success({
         message: 'Colaborador Desativado!',
       })
-      loadContributors({})
+      setContributors(prevState =>
+        prevState.map(p => {
+          if (p.id === id) {
+            p.enabled = false
+          }
+
+          return p
+        }),
+      )
     } catch (error) {
       notification.success({
         message: 'Erro ao Desativar!',
@@ -135,7 +143,15 @@ export default function Home() {
       notification.success({
         message: 'Colaborador Ativado!',
       })
-      loadContributors({})
+      setContributors(prevState =>
+        prevState.map(p => {
+          if (p.id === id) {
+            p.enabled = true
+          }
+
+          return p
+        }),
+      )
     } catch (error) {
       notification.success({
         message: 'Erro ao Ativar!',
@@ -145,14 +161,17 @@ export default function Home() {
   }
 
   function handleSearch(value: string | Date[], searchType: SearchTypes) {
-    if (searchType === 'name') {
-      loadContributors({ name: value as string })
-    } else {
+    if (searchType === 'date') {
       const [startDate, endDate] = value as Date[]
 
-      loadContributors({
-        startDate: startDate.toString(),
-        endDate: endDate.toString(),
+      setFilter({
+        type: searchType,
+        value: [startDate.toString(), endDate.toString()],
+      })
+    } else {
+      setFilter({
+        type: searchType,
+        value: value as string,
       })
     }
   }
@@ -166,8 +185,20 @@ export default function Home() {
   }
 
   useEffect(() => {
-    loadContributors({})
-  }, [toggleActive])
+    const params: LoadContributorsParams = {
+      enabled: toggleActive === 'active',
+    }
+
+    if (filter.type === 'date' && filter.value) {
+      params.startDate = filter.value[0]
+      params.endDate = filter.value[1]
+    }
+
+    if (filter.type === 'name' && filter.value) {
+      params.name = filter.value as string
+    }
+    loadContributors(params)
+  }, [toggleActive, filter])
 
   return (
     <Menu active="home">
@@ -185,6 +216,7 @@ export default function Home() {
             dataSource={contributors}
             pagination={{ position: ['bottomCenter'], hideOnSinglePage: true }}
             scroll={{ y: 300, x: '100%' }}
+            loading={loadingContributors}
           />
 
           <S.Footer>

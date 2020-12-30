@@ -6,10 +6,11 @@ import { ContributorAttributes } from '../models/Contributor'
 
 class ContributorController {
   async index(request: Request, response: Response) {
-    const { enabled, name, startDate, endDate } = request.query
+    const { enabled, orderBy = '0', name, startDate, endDate } = request.query
+    console.log(name, startDate, endDate, enabled)
 
     try {
-      const attributes = ['id', 'name', 'admissionDate']
+      const attributes = ['id', 'name', 'admissionDate', 'enabled']
       const where: WhereOptions<ContributorAttributes> = {
         poolId: Number(request.params.poolId) || 0,
         enabled: enabled === 'true',
@@ -32,7 +33,11 @@ class ContributorController {
         where.admissionDate = { [Op.between]: [start, end] }
       }
 
-      const pools = await Contributor.findAll({ where, attributes })
+      const pools = await Contributor.findAll({
+        where,
+        attributes,
+        order: [['createdAt', orderBy.toString() === '0' ? 'DESC' : 'ASC']],
+      })
 
       return response.json(pools)
     } catch (error) {

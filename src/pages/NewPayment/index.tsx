@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Row, Form, Col, Button, AutoComplete } from 'antd'
+import { Row, Form, Col, Button, AutoComplete, notification } from 'antd'
 import { Menu, Header } from '../../components'
 import 'moment/locale/pt-br'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -108,10 +108,16 @@ export default function NewPayment() {
         fine: fine.value,
         total: total.value,
       })
-
+      notification.success({
+        message: 'Salvo com Sucesso!',
+        description: `Matricula: ${contributor.id}, Total: ${total.mask}`,
+      })
       history.push(routes.payment)
     } catch (error) {
-      console.log('Error', error)
+      notification.error({
+        message: 'Erro Interno',
+        description: `erro ao tentar salvar: ${error}`,
+      })
     }
   }
 
@@ -229,7 +235,7 @@ export default function NewPayment() {
               </Col>
             </Row>
 
-            <h2>Auxilio</h2>
+            <h2>Auxílio</h2>
 
             <S.Divider />
 
