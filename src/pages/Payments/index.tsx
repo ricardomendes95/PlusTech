@@ -18,12 +18,25 @@ import { routes } from '../../routes'
 import { Definitions } from '../../core/types'
 import { PaymentService } from '../../services'
 
+interface LoadPaymentsParams {
+  contributor?: string | number
+  startDate?: string
+  endDate?: string
+  enabled?: boolean
+}
+
+interface Filter {
+  value: string | string[]
+  type: SearchTypes
+}
+
 export default function Movement() {
   const history = useHistory()
 
   const [toggleActive, setToggleActive] = useState<ToggleActiveTypes>('active')
   const [loadingPayments, setLoadingPayments] = useState(false)
   const [payments, setPayments] = useState<Definitions['Payment'][]>([])
+  const [filter, setFilter] = useState<Filter>({ value: '', type: 'name' })
 
   const poolId = Number(window.localStorage.getItem('poolId'))
 
@@ -91,11 +104,11 @@ export default function Movement() {
     },
   ]
 
-  async function loadPayments() {
+  async function loadPayments(params?: LoadPaymentsParams) {
     setLoadingPayments(true)
 
     try {
-      const response = await PaymentService.getAll(poolId)
+      const response = await PaymentService.getAll({ poolId, params })
 
       setPayments(response.data)
     } catch (error) {
@@ -118,8 +131,19 @@ export default function Movement() {
   }
 
   function handleSearch(value: string | Date[], searchType: SearchTypes) {
-    console.log('value', value)
-    console.log('searchType', searchType)
+    if (searchType === 'date') {
+      const [startDate, endDate] = value as Date[]
+
+      setFilter({
+        type: searchType,
+        value: [startDate.toString(), endDate.toString()],
+      })
+    } else {
+      setFilter({
+        type: searchType,
+        value: value as string,
+      })
+    }
   }
 
   function handleToggleActive(toggleActive: ToggleActiveTypes) {
@@ -135,8 +159,21 @@ export default function Movement() {
   }
 
   useEffect(() => {
-    loadPayments()
-  }, [])
+    const params: LoadPaymentsParams = {
+      enabled: toggleActive === 'active',
+    }
+
+    if (filter.type === 'date' && filter.value) {
+      params.startDate = filter.value[0]
+      params.endDate = filter.value[1]
+    }
+
+    if (filter.type === 'name' && filter.value) {
+      params.contributor = filter.value as string
+    }
+
+    loadPayments(params)
+  }, [toggleActive, filter])
 
   return (
     <Menu active="movement">

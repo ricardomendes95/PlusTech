@@ -16,7 +16,7 @@ export function create(contributor: Definitions['Contributor']) {
 
 export function getAll(data: GetContributorsRequest) {
   const config: AxiosRequestConfig = {
-    params: { ...data.params },
+    params: data.params,
   }
 
   return api.get<GetContributorsResponse>(
