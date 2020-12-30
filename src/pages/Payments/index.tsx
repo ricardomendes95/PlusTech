@@ -103,8 +103,8 @@ export default function Movement() {
     setToggleActive(toggleActive)
   }
 
-  function handleNewContributor() {
-    history.push(routes.newMovement)
+  function handleNewPayment() {
+    history.push(routes.newPayment)
   }
 
   function printDoc(id: number) {
@@ -134,7 +134,7 @@ export default function Movement() {
               type="primary"
               icon={<AiOutlinePlus />}
               size="large"
-              onClick={handleNewContributor}
+              onClick={handleNewPayment}
             >
               Criar
             </S.Create>

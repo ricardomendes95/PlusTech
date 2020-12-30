@@ -42,7 +42,7 @@ export const Menu: React.FC<MenuProps> = ({ active = 'none', children }) => {
         </S.MenuItem>
 
         <S.MenuItem active={active === 'movement'}>
-          <Link to={{ pathname: routes.movement, state: { open } }}>
+          <Link to={{ pathname: routes.payment, state: { open } }}>
             <AiOutlineSwap size={50} />
             {open && <span>Movimentação</span>}
           </Link>
