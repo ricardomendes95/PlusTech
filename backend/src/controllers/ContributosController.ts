@@ -27,7 +27,7 @@ class ContributorController {
       })
     }
 
-    if (wallet.length > 50) {
+    if (wallet && wallet.length > 50) {
       return response.status(400).json({
         error: 'Carteira Não pode ter mais que 50 caracters',
       })
