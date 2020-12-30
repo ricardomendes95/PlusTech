@@ -104,7 +104,7 @@ export default function NewPayment() {
         total: total.value,
       })
 
-      history.push(routes.movement)
+      history.push(routes.payment)
     } catch (error) {
       console.log('Error', error)
     }

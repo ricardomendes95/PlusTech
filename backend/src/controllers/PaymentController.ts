@@ -4,7 +4,9 @@ import { Payment } from '../models'
 class PaymentController {
   async index(request: Request, response: Response) {
     try {
-      const payments = await Payment.findAll()
+      const { poolId } = request.params
+
+      const payments = await Payment.findAll({ where: { poolId } })
 
       return response.json(payments)
     } catch (error) {
