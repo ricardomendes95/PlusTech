@@ -24,3 +24,11 @@ export function getAll(data: GetContributorsRequest) {
     config,
   )
 }
+
+export function disable(id: number) {
+  return api.put(`/contributors/${id}/disable`)
+}
+
+export function enable(id: number) {
+  return api.put(`/contributors/${id}/enable`)
+}
