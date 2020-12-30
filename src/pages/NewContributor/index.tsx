@@ -41,13 +41,13 @@ export default function NewContributor() {
   }
 
   function handleSave() {
-    // event.preventDefault()
     console.log(id, pool, name, email, wallet, dateAdmission)
   }
   return (
     <S.Container>
       <Menu active="home">
         <Header text="Novo Colaborador" showBackButton />
+
         <S.Content>
           <Form layout="vertical" onFinish={handleSave}>
             <Row gutter={[16, 0]}>
@@ -60,6 +60,7 @@ export default function NewContributor() {
                   />
                 </Form.Item>
               </Col>
+
               <Col sm={10} md={10} lg={8} xl={5}>
                 <Form.Item label="Pool">
                   <Select
@@ -75,6 +76,7 @@ export default function NewContributor() {
                 </Form.Item>
               </Col>
             </Row>
+
             <Row>
               <Col sm={20} md={20} lg={20} xl={16}>
                 <Form.Item
@@ -92,6 +94,7 @@ export default function NewContributor() {
                 </Form.Item>
               </Col>
             </Row>
+
             <Row gutter={[16, 0]}>
               <Col sm={6} md={6} lg={4} xl={3}>
                 <Form.Item label="Data de Admissão">
@@ -104,6 +107,7 @@ export default function NewContributor() {
                   </ConfigProvider>
                 </Form.Item>
               </Col>
+
               <Col sm={14} md={10} lg={12} xl={11}>
                 <Form.Item
                   label="E-mail"
@@ -123,6 +127,7 @@ export default function NewContributor() {
                 </Form.Item>
               </Col>
             </Row>
+
             <Row>
               <Col sm={20} md={20} lg={20} xl={16}>
                 <Form.Item
@@ -144,6 +149,7 @@ export default function NewContributor() {
                 </Form.Item>
               </Col>
             </Row>
+
             <Row>
               <Col
                 style={{ display: 'flex', justifyContent: 'flex-end' }}

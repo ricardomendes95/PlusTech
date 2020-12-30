@@ -6,7 +6,7 @@ import NewContributor from './pages/NewContributor'
 import Settings from './pages/Settings'
 import Pool from './pages/Pool'
 import Movement from './pages/Movement'
-import NewMovement from './pages/NewMovement'
+import NewMovement from './pages/NewPayment'
 
 export const routes = {
   login: '/',

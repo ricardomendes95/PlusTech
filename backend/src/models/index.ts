@@ -3,11 +3,27 @@ import Pool from './Pool'
 import Payment from './Payment'
 
 Pool.hasMany(Contributor, {
-  as: 'contributor',
+  as: 'contributors',
+})
+
+Pool.hasMany(Payment, {
+  as: 'payments',
 })
 
 Contributor.belongsTo(Pool, {
   as: 'pool',
+})
+
+Contributor.hasMany(Payment, {
+  as: 'payments',
+})
+
+Payment.belongsTo(Pool, {
+  as: 'pool',
+})
+
+Payment.belongsTo(Contributor, {
+  as: 'contributor',
 })
 
 export { Pool, Contributor, Payment }

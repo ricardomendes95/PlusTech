@@ -13,4 +13,18 @@ export interface Definitions {
     id: number
     name: string
   }
+  Payment: {
+    id?: number
+    poolId: number
+    contributorId: number
+    salary?: number
+    leader?: number
+    bonus?: number
+    goal?: number
+    rent?: number
+    taxi?: number
+    fine?: number
+    total?: number
+    enabled?: boolean
+  }
 }
