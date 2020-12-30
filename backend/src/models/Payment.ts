@@ -15,6 +15,7 @@ export interface PaymentAttributes {
   fine?: number
   total?: number
   enabled?: boolean
+  createdAt?: Date
 }
 
 type PaymentCreationAttributes = Optional<PaymentAttributes, 'id'>
@@ -46,7 +47,7 @@ export default class Payment
 
   public enabled!: boolean
 
-  public readonly createdAt!: Date
+  public createdAt!: Date
 
   public readonly updatedAt!: Date
 }
@@ -69,6 +70,7 @@ const dataTypes = {
   fine: DataTypes.DECIMAL,
   total: DataTypes.DECIMAL,
   enabled: DataTypes.BOOLEAN,
+  createdAt: DataTypes.DATE,
 }
 
 Payment.init(dataTypes, options)

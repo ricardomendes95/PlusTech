@@ -1,19 +1,47 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Request, Response } from 'express'
+import { Op, WhereOptions } from 'sequelize'
+
 import { Contributor, Payment } from '../models'
+import { ContributorAttributes } from '../models/Contributor'
+import { PaymentAttributes } from '../models/Payment'
 
 class PaymentController {
   async index(request: Request, response: Response) {
-    try {
-      const { poolId } = request.params
+    const poolId = Number(request.params.poolId) || 0
+    const { enabled = 'true', contributor, startDate, endDate } = request.query
 
+    const where: WhereOptions<PaymentAttributes> = {
+      poolId,
+      enabled: enabled === 'true',
+    }
+    let contributorWhere: WhereOptions<ContributorAttributes> = {}
+
+    if (contributor) {
+      contributorWhere = {
+        [Op.or]: [
+          { id: Number(contributor) || 0 },
+          { name: { [Op.like]: `%${contributor}%` } },
+        ],
+      }
+    }
+
+    if (startDate && endDate) {
+      const start = new Date(startDate.toString())
+      const end = new Date(endDate.toString())
+
+      where.createdAt = { [Op.between]: [start, end] }
+    }
+
+    try {
       const payments = await Payment.findAll({
-        where: { poolId },
+        where,
         include: [
           {
             // @ts-ignore
             model: Contributor,
             as: 'contributor',
+            where: contributorWhere,
           },
         ],
       })
