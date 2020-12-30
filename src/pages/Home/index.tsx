@@ -16,6 +16,7 @@ import { useHistory } from 'react-router-dom'
 import { routes } from '../../routes'
 import { ContributorService } from '../../services'
 import { Definitions } from '../../core/types'
+import moment from 'moment'
 
 interface LoadContributorsParams {
   name?: string
@@ -46,8 +47,10 @@ export default function Home() {
     },
     {
       title: 'Data de Admissão',
-      dataIndex: 'admissionDate',
       key: 'admissionDate',
+      render: (record: { admissionDate: Date }) => (
+        <p>{moment(record.admissionDate).format('DD/MM/YYYY')}</p>
+      ),
     },
 
     {
@@ -61,7 +64,10 @@ export default function Home() {
               <AiOutlineEdit size={20} />
             </S.Action>
           </Tooltip>
-          <Tooltip title="Desativar/Ativar" key={record.id}>
+          <Tooltip
+            title={toggleActive === 'active' ? 'Desativar' : 'Ativar'}
+            key={record.id}
+          >
             <S.Action
               onClick={() =>
                 toggleActive === 'active'
@@ -105,6 +111,7 @@ export default function Home() {
 
   function update(id: number) {
     console.log('send update colaboration:', id)
+    history.push(`/contributor/edit/${id}`)
   }
 
   async function disable(id: number) {
@@ -142,7 +149,6 @@ export default function Home() {
       loadContributors({ name: value as string })
     } else {
       const [startDate, endDate] = value as Date[]
-      console.log(startDate, endDate)
 
       loadContributors({
         startDate: startDate.toString(),

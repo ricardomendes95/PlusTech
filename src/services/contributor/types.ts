@@ -4,6 +4,7 @@ export type CreateContributorResponse = Definitions['Contributor']
 
 export interface GetContributorsRequest {
   poolId: number
+  id?: number
   params?: {
     enabled?: boolean
     name?: string

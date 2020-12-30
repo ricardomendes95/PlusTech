@@ -7,12 +7,14 @@ import Settings from './pages/Settings'
 import Pool from './pages/Pool'
 import Payments from './pages/Payments'
 import NewPayment from './pages/NewPayment'
+import EditContributor from './pages/EditContributor'
 
 export const routes = {
   login: '/',
   home: '/home',
   settings: '/settings',
   newContributor: '/contributor/new',
+  editContributor: '/contributor/edit/:id',
   pool: '/pool',
   payment: '/payment',
   newPayment: '/payment/new',
@@ -26,6 +28,7 @@ const Routes: React.FC = () => {
         <Route path={routes.home} component={Home} />
         <Route path={routes.settings} component={Settings} />
         <Route path={routes.newContributor} component={NewContributor} />
+        <Route path={routes.editContributor} component={EditContributor} />
         <Route path={routes.pool} component={Pool} />
         <Route path={routes.newPayment} component={NewPayment} />
         <Route path={routes.payment} component={Payments} />

@@ -25,10 +25,18 @@ export function getAll(data: GetContributorsRequest) {
   )
 }
 
+export function findByPK(id: number) {
+  return api.get<Definitions['Contributor']>(`/contributors/${id}`)
+}
+
 export function disable(id: number) {
   return api.put(`/contributors/${id}/disable`)
 }
 
 export function enable(id: number) {
   return api.put(`/contributors/${id}/enable`)
+}
+
+export function update(contributor: Definitions['Contributor']) {
+  return api.put(`/contributors/${contributor.id}/update`, contributor)
 }
