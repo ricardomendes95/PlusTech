@@ -10,6 +10,7 @@ class ContributorController {
     console.log(enabled, name, startDate, endDate)
 
     try {
+      const attributes = ['id', 'name', 'admissionDate']
       const where: WhereOptions<ContributorAttributes> = {
         poolId: Number(request.params.poolId) || 0,
         enabled: enabled === 'true',
@@ -26,7 +27,7 @@ class ContributorController {
         where.admissionDate = { [Op.between]: [start, end] }
       }
 
-      const pools = await Contributor.findAll({ where })
+      const pools = await Contributor.findAll({ where, attributes })
 
       return response.json(pools)
     } catch (error) {
