@@ -30,8 +30,10 @@ routes.post('/pools/:poolId/payments', PaymentController.create)
  * contributor
  */
 routes.get('/pools/:poolId/contributors', ContributorController.index)
+routes.get('/contributors/:id', ContributorController.findByPK)
 routes.post('/pools/:poolId/contributors', ContributorController.create)
 routes.put('/contributors/:id/disable', ContributorController.disable)
 routes.put('/contributors/:id/enable', ContributorController.enable)
+routes.put('/contributors/:id/update', ContributorController.update)
 
 export default routes

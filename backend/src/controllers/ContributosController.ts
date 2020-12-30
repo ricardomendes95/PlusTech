@@ -7,7 +7,6 @@ import { ContributorAttributes } from '../models/Contributor'
 class ContributorController {
   async index(request: Request, response: Response) {
     const { enabled, name, startDate, endDate } = request.query
-    console.log(enabled, name, startDate, endDate)
 
     try {
       const attributes = ['id', 'name', 'admissionDate']
@@ -41,6 +40,27 @@ class ContributorController {
     }
   }
 
+  async findByPK(request: Request, response: Response) {
+    try {
+      const attributes = [
+        'id',
+        'name',
+        'admissionDate',
+        'wallet',
+        'poolId',
+        'email',
+      ]
+
+      const pools = await Contributor.findByPk(request.params.id, {
+        attributes,
+      })
+
+      return response.json(pools)
+    } catch (error) {
+      return response.status(500).json({ error })
+    }
+  }
+
   async create(request: Request, response: Response) {
     const { poolId, name, admissionDate, email, wallet, enabled } = request.body
 
@@ -65,6 +85,43 @@ class ContributorController {
         wallet,
         enabled,
       })
+
+      return response.status(201).json(contributor)
+    } catch (error) {
+      console.log(error)
+      return response.status(500).json({ error })
+    }
+  }
+
+  async update(request: Request, response: Response) {
+    const { poolId, name, admissionDate, email, wallet, enabled } = request.body
+
+    const id = request.params.id
+
+    if (!name || !admissionDate || !poolId) {
+      return response.status(400).json({
+        error: 'Campos incompletos',
+      })
+    }
+
+    if (wallet && wallet.length > 50) {
+      return response.status(400).json({
+        error: 'Carteira Não pode ter mais que 50 caracters',
+      })
+    }
+
+    try {
+      const contributor = await Contributor.update(
+        {
+          poolId,
+          name,
+          admissionDate,
+          email,
+          wallet,
+          enabled,
+        },
+        { where: { id } },
+      )
 
       return response.status(201).json(contributor)
     } catch (error) {

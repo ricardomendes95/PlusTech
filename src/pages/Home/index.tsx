@@ -47,7 +47,6 @@ export default function Home() {
     },
     {
       title: 'Data de Admissão',
-      // dataIndex: 'admissionDate',
       key: 'admissionDate',
       render: (record: { admissionDate: Date }) => (
         <p>{moment(record.admissionDate).format('DD/MM/YYYY')}</p>
@@ -112,6 +111,7 @@ export default function Home() {
 
   function update(id: number) {
     console.log('send update colaboration:', id)
+    history.push(`/contributor/edit/${id}`)
   }
 
   async function disable(id: number) {

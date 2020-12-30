@@ -18,16 +18,20 @@ import locale from 'antd/lib/locale/pt_BR'
 import * as S from './styles'
 import { ContributorService, PoolService } from '../../services'
 import { Definitions } from '../../core/types'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { routes } from '../../routes'
 
+interface ContributorParams {
+  id: string
+}
 export default function EditContributor() {
-  const [id, setId] = useState(0)
-  const [poolId, setPoolId] = useState(window.localStorage.getItem('poolId'))
+  const params = useParams<ContributorParams>()
+  const [id, setId] = useState<number>()
+  const [poolId, setPoolId] = useState<string>()
   const [name, setName] = useState('')
-  const [dateAdmission, setDateAdmission] = useState(new Date())
-  const [email, setEmail] = useState('')
-  const [wallet, setWallet] = useState('')
+  const [dateAdmission, setDateAdmission] = useState<Date>()
+  const [email, setEmail] = useState<string>()
+  const [wallet, setWallet] = useState<string>()
 
   const history = useHistory()
 
@@ -42,6 +46,23 @@ export default function EditContributor() {
       console.log(error)
     }
   }
+  async function loadContributor(): Promise<void> {
+    try {
+      const { data } = await ContributorService.findByPK(Number(params?.id))
+
+      setId(data.id)
+      setPoolId(String(data.poolId))
+      setName(data.name || '')
+
+      if (data.admissionDate) {
+        setDateAdmission(new Date(data.admissionDate))
+      }
+      setEmail(data.email)
+      setWallet(data.wallet)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   function handleSelectPool(value: string) {
     const idPool = poolsOptions?.find(opt => opt.name === value)?.id || ''
@@ -50,17 +71,20 @@ export default function EditContributor() {
 
   async function handleSave() {
     try {
-      const { data: contributor } = await ContributorService.create({
+      const { data } = await ContributorService.update({
+        id: Number(id),
         name,
         poolId: Number(poolId),
         admissionDate: dateAdmission,
         email,
         wallet,
       })
-      notification.success({
-        message: 'Salvo com Sucesso!',
-        description: `Matricula: ${contributor.id}, Colaborador: ${contributor.name}`,
-      })
+      if (data) {
+        notification.success({
+          message: 'Salvo com Sucesso!',
+          description: `Matricula: ${id}, Colaborador: ${name}`,
+        })
+      }
       history.push(routes.home)
     } catch (error) {
       notification.error({
@@ -72,14 +96,23 @@ export default function EditContributor() {
 
   useEffect(() => {
     loadPools()
+    loadContributor()
   }, [])
 
   return (
     <S.Container>
       <Menu active="home">
-        <Header text="Novo Colaborador" showBackButton />
+        <Header text="Editar Colaborador" showBackButton />
         <S.Content>
-          <Form layout="vertical" onFinish={handleSave}>
+          <Form
+            layout="vertical"
+            onFinish={handleSave}
+            fields={[
+              { name: ['name'], value: name },
+              { name: ['email'], value: email },
+              { name: ['wallet'], value: wallet },
+            ]}
+          >
             <Row gutter={[16, 0]}>
               <Col sm={10} md={6} lg={5} xl={5}>
                 <Form.Item label="Matricula">
@@ -108,13 +141,12 @@ export default function EditContributor() {
               <Col sm={20} md={20} lg={20} xl={16}>
                 <Form.Item
                   label="Nome"
-                  name="Nome"
+                  name="name"
                   rules={[
                     { required: true, message: 'Por favor insira um Nome!' },
                   ]}
                 >
                   <Input
-                    value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="Ex: João"
                   />
@@ -126,7 +158,7 @@ export default function EditContributor() {
                 <Form.Item label="Data de Admissão">
                   <ConfigProvider locale={locale}>
                     <DatePicker
-                      defaultValue={moment(dateAdmission, 'DD/MM/YYYY')}
+                      value={moment(dateAdmission, 'DD/MM/YYYY')}
                       onChange={e =>
                         setDateAdmission(e?.toDate() || new Date())
                       }
@@ -158,7 +190,7 @@ export default function EditContributor() {
               <Col sm={20} md={20} lg={20} xl={16}>
                 <Form.Item
                   label="Carteira"
-                  name="Carteira"
+                  name="wallet"
                   rules={[
                     {
                       max: 50,
