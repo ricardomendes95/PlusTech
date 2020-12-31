@@ -102,6 +102,53 @@ class PaymentController {
     }
   }
 
+  async update(request: Request, response: Response) {
+    const { id } = request.params
+    const {
+      contributorId,
+      salary = 0.0,
+      leader = 0.0,
+      bonus = 0.0,
+      goal = 0.0,
+      rent = 0.0,
+      taxi = 0.0,
+      fine = 0.0,
+      total = 0.0,
+    } = request.body
+
+    if (!contributorId) {
+      return response.status(400).json({
+        error: 'Campos incompletos',
+      })
+    }
+
+    try {
+      const payment = await Payment.findByPk(id)
+
+      if (!payment) {
+        return response.status(404).json({
+          error: 'Pagamento nao encontrado',
+        })
+      }
+
+      payment.contributorId = contributorId
+      payment.salary = salary
+      payment.leader = leader
+      payment.bonus = bonus
+      payment.goal = goal
+      payment.rent = rent
+      payment.taxi = taxi
+      payment.fine = fine
+      payment.total = total
+
+      await payment.save()
+
+      return response.send()
+    } catch (error) {
+      return response.status(500).json({ error })
+    }
+  }
+
   async disable(request: Request, response: Response) {
     const { id } = request.params
 

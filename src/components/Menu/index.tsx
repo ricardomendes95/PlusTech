@@ -5,7 +5,7 @@ import {
   AiOutlineMenuUnfold,
   AiOutlineMenuFold,
   AiOutlineSwap,
-  AiOutlineSetting,
+  // AiOutlineSetting,
   AiOutlineLogout,
 } from 'react-icons/ai'
 import { Link } from 'react-router-dom'
@@ -44,28 +44,37 @@ export const Menu: React.FC<MenuProps> = ({ active = 'none', children }) => {
 
         <S.MenuItem active={active === 'home'}>
           <Link to={routes.home}>
-            <AiOutlineTeam size={50} />
+            <AiOutlineTeam
+              style={{ paddingRight: open ? '16px' : '0px' }}
+              size={open ? 45 : 50}
+            />
             {open && <span>Colaborador</span>}
           </Link>
         </S.MenuItem>
 
         <S.MenuItem active={active === 'movement'}>
           <Link to={routes.payment}>
-            <AiOutlineSwap size={50} />
+            <AiOutlineSwap
+              style={{ paddingRight: open ? '16px' : '0px' }}
+              size={open ? 45 : 50}
+            />
             {open && <span>Movimentação</span>}
           </Link>
         </S.MenuItem>
 
-        <S.MenuItem active={active === 'settings'}>
+        {/* <S.MenuItem active={active === 'settings'}>
           <Link to={routes.settings}>
-            <AiOutlineSetting size={50} />
+            <AiOutlineSetting style={{ paddingRight: open ? '16px' : '0px' }} size={open ? 45 : 50} />
             {open && <span>Configuração</span>}
           </Link>
-        </S.MenuItem>
+        </S.MenuItem> */}
 
         <S.MenuItem active={false}>
           <Link to={routes.login}>
-            <AiOutlineLogout size={50} />
+            <AiOutlineLogout
+              style={{ paddingRight: open ? '16px' : '0px' }}
+              size={open ? 45 : 50}
+            />
             {open && <span>Sair</span>}
           </Link>
         </S.MenuItem>

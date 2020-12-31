@@ -27,6 +27,7 @@ routes.get('/pools/:poolId/payments', PaymentController.index)
 routes.post('/pools/:poolId/payments', PaymentController.create)
 routes.put('/payments/:id/disable', PaymentController.disable)
 routes.put('/payments/:id/enable', PaymentController.enable)
+routes.put('/payments/:id', PaymentController.update)
 
 /*
  * contributor
@@ -36,7 +37,7 @@ routes.get('/contributors/:id', ContributorController.findByPK)
 routes.post('/pools/:poolId/contributors', ContributorController.create)
 routes.put('/contributors/:id/disable', ContributorController.disable)
 routes.put('/contributors/:id/enable', ContributorController.enable)
-routes.put('/contributors/:id/update', ContributorController.update)
+routes.put('/contributors/:id', ContributorController.update)
 routes.get(
   '/contributors/:contributorId/payments/latest',
   PaymentController.latest,

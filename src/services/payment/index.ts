@@ -23,6 +23,10 @@ export function create(payment: Definitions['Payment']) {
   )
 }
 
+export function update(payment: Definitions['Payment']) {
+  return api.put<void>(`/payments/${payment.id}`, payment)
+}
+
 export function enable(id: number) {
   return api.put<void>(`/payments/${id}/enable`)
 }
