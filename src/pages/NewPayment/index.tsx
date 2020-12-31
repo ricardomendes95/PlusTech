@@ -75,9 +75,50 @@ export default function NewPayment() {
     }
   }
 
+  async function loadLatestContributorPayment(contributorId: number) {
+    try {
+      const { data } = await PaymentService.latest(contributorId)
+
+      console.log(data)
+
+      setSalary({
+        value: Number(data.salary),
+        mask: `R$ ${data.salary}`,
+      })
+      setLeader({
+        value: Number(data.leader),
+        mask: `R$ ${data.leader}`,
+      })
+      setBonus({
+        value: Number(data.bonus),
+        mask: `R$ ${data.bonus}`,
+      })
+      setGoal({
+        value: Number(data.goal),
+        mask: `R$ ${data.goal}`,
+      })
+      setRent({
+        value: Number(data.rent),
+        mask: `R$ ${data.rent}`,
+      })
+      setTaxi({
+        value: Number(data.taxi),
+        mask: `R$ ${data.taxi}`,
+      })
+      setFine({
+        value: Number(data.fine),
+        mask: `R$ ${data.fine}`,
+      })
+    } catch (error) {
+      /**
+       * No payment found for this contributor
+       */
+      console.log('[loadLatestContributorPayment] -', error)
+    }
+  }
+
   function handleSearch(searchText: string) {
-    // Buscar novos contribuidores
-    console.log('Search for', searchText)
+    loadContributors(searchText)
   }
 
   function handleSelect(data: string, option: any) {
@@ -116,6 +157,16 @@ export default function NewPayment() {
   }
 
   useEffect(() => {
+    loadContributors(autoCompleteValue)
+  }, [])
+
+  useEffect(() => {
+    if (contributor) {
+      loadLatestContributorPayment(contributor.id)
+    }
+  }, [contributor])
+
+  useEffect(() => {
     const value =
       salary.value +
       leader.value +
@@ -134,17 +185,25 @@ export default function NewPayment() {
     })
   }, [salary, leader, bonus, goal, rent, taxi, fine])
 
-  useEffect(() => {
-    loadContributors(autoCompleteValue)
-  }, [autoCompleteValue])
-
   return (
     <S.Container>
       <Menu active="home">
         <Header text="Novo Pagamento" showBackButton />
 
         <S.Content>
-          <Form layout="vertical" onFinish={handleSave}>
+          <Form
+            layout="vertical"
+            onFinish={handleSave}
+            fields={[
+              { name: ['salary'], value: salary.mask },
+              { name: ['leader'], value: leader.mask },
+              { name: ['bonus'], value: bonus.mask },
+              { name: ['goal'], value: goal.mask },
+              { name: ['rent'], value: rent.mask },
+              { name: ['taxi'], value: taxi.mask },
+              { name: ['fine'], value: fine.mask },
+            ]}
+          >
             <Row>
               <Col sm={10} md={10} lg={10} xl={16}>
                 <Form.Item
@@ -190,7 +249,7 @@ export default function NewPayment() {
 
             <Row gutter={[16, 0]}>
               <Col sm={10} md={6} lg={5} xl={5}>
-                <Form.Item label="Lider de Equipe" name="lider">
+                <Form.Item label="Lider de Equipe" name="leader">
                   <CurrencyInput
                     value={leader.mask}
                     onChangeEvent={(_: any, mask: any, value: any) =>

@@ -145,6 +145,31 @@ class PaymentController {
       return response.status(500).json(error)
     }
   }
+
+  async latest(request: Request, response: Response) {
+    const contributorId = Number(request.params.contributorId) || 0
+
+    try {
+      const payment = await Payment.findOne({
+        where: {
+          contributorId,
+          enabled: true,
+        },
+        order: [['createdAt', 'DESC']],
+        limit: 1,
+      })
+
+      if (!payment) {
+        return response.status(404).json({
+          error: 'Nenhum pagamento encontrado',
+        })
+      }
+
+      return response.json(payment)
+    } catch (error) {
+      return response.status(500).json(error)
+    }
+  }
 }
 
 export default new PaymentController()

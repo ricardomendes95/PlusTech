@@ -3,6 +3,7 @@ import {
   CreatePaymentResponse,
   GetPaymentsRequest,
   GetPaymentsResponse,
+  GetLatestPaymentResponse,
 } from './types'
 import api from '../api'
 import { Definitions } from '../../core/types'
@@ -28,4 +29,10 @@ export function enable(id: number) {
 
 export function disable(id: number) {
   return api.put<void>(`/payments/${id}/disable`)
+}
+
+export function latest(contributorId: number) {
+  return api.get<GetLatestPaymentResponse>(
+    `/contributors/${contributorId}/payments/latest`,
+  )
 }
