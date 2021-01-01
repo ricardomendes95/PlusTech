@@ -51,7 +51,6 @@ export const MenuItem = styled.li<MenuItemProps>`
   border-left: ${({ active }) =>
     active ? `4px solid ${Colors.base.primary.tint300}` : 'none'};
   :hover {
-    /* background-color: rgba(0,0,0, .2) */
     background-color: ${Colors.base.secondary.tint400};
   }
 
