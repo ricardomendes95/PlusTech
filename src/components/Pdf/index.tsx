@@ -1,23 +1,45 @@
 import React from 'react'
 import * as S from './styles'
-
 export class ComponentToPrint extends React.Component {
   constructor(props: any) {
     super(props)
-    this.matricula = props.item.id
-    this.name = props.item.name
-    this.admissionDate = props.item.admissionDate
-    this.dateEmit = props.item.createdAt
-    this.email = props.item.email
-    this.wallet = props.item.wallet
+    this.matricula = props?.item.contributor?.id
+    this.name = props.item.contributor.name
+    this.admissionDate =
+      new Date(props.item.contributor?.admissionDate) || new Date()
+    this.dateEmit = new Date(props.item.createdAt) || new Date()
+    this.email = props.item.contributor.email || 'Não informado'
+    this.wallet = props.item.contributor.wallet || 'Não informado'
+    this.salary = this.numberToReal(props.item.salary) || 'R$ 0,00'
+    this.leader = this.numberToReal(props.item.leader) || 'R$ 0,00'
+    this.bonus = this.numberToReal(props.item.bonus) || 'R$ 0,00'
+    this.goal = this.numberToReal(props.item.goal) || 'R$ 0,00'
+    this.rent = this.numberToReal(props.item.rent) || 'R$ 0,00'
+    this.taxi = this.numberToReal(props.item.taxi) || 'R$ 0,00'
+    this.fine = this.numberToReal(props.item.fine) || 'R$ 0,00'
+    this.total = this.numberToReal(props.item.total) || 'R$ 0,00'
   }
 
-  name
+  name = ''
   admissionDate
   dateEmit
   email
   matricula
   wallet
+  salary
+  leader
+  bonus
+  goal
+  rent
+  taxi
+  fine
+  total
+
+  numberToReal(value: string) {
+    const numero = Number(value).toFixed(2).split('.')
+    numero[0] = 'R$ ' + numero[0].split(/(?=(?:...)*$)/).join('.')
+    return numero.join(',')
+  }
 
   render() {
     return (
@@ -38,12 +60,12 @@ export class ComponentToPrint extends React.Component {
             </S.Left>
             <S.Right>
               <S.P>{this.name}</S.P>
-              <S.P>{this.dateEmit}</S.P>
-              <S.P>{this.admissionDate.toLocaleDateString('pt-BR')}</S.P>
+              <S.P>{this.dateEmit.toLocaleDateString('pt-BR')}</S.P>
+              <S.P>{this.admissionDate?.toLocaleDateString('pt-BR')}</S.P>
               <S.P>{this.email}</S.P>
               <S.P>{this.matricula}</S.P>
               <S.P>{this.wallet}</S.P>
-              <S.P>R$ 1.500,00</S.P>
+              <S.P>{this.salary}</S.P>
             </S.Right>
           </S.Colaborator>
           <S.Payment>
@@ -56,9 +78,9 @@ export class ComponentToPrint extends React.Component {
                 <S.P>Meta pessoal:</S.P>
               </S.Left>
               <S.Right>
-                <S.P>R$ 200,00</S.P>
-                <S.P>R$ 300,00</S.P>
-                <S.P>R$ 400,00</S.P>
+                <S.P>{this.leader}</S.P>
+                <S.P>{this.bonus}</S.P>
+                <S.P>{this.goal}</S.P>
               </S.Right>
             </S.Drop>
 
@@ -70,8 +92,8 @@ export class ComponentToPrint extends React.Component {
                 <S.P>Táxi:</S.P>
               </S.Left>
               <S.Right>
-                <S.P>R$ 200,00</S.P>
-                <S.P>R$ 300,00</S.P>
+                <S.P>{this.rent}</S.P>
+                <S.P>{this.taxi}</S.P>
               </S.Right>
             </S.Drop>
 
@@ -80,12 +102,12 @@ export class ComponentToPrint extends React.Component {
                 <S.P>Multa:</S.P>
               </S.Left>
               <S.Right>
-                <S.P>R$ 50,00:</S.P>
+                <S.P>{this.fine}</S.P>
               </S.Right>
             </S.Drop>
 
             <S.Total className="total">
-              <strong>TOTAL: 2.000,00</strong>
+              <strong>TOTAL: {this.total}</strong>
             </S.Total>
           </S.Payment>
         </S.Content>

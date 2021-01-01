@@ -24,6 +24,7 @@ routes.put('/pools/:id', PoolController.update)
  * Payment
  */
 routes.get('/pools/:poolId/payments', PaymentController.index)
+routes.get('/payments/:id', PaymentController.findOne)
 routes.post('/pools/:poolId/payments', PaymentController.create)
 routes.put('/payments/:id/disable', PaymentController.disable)
 routes.put('/payments/:id/enable', PaymentController.enable)

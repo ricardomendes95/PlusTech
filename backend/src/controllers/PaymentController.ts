@@ -59,6 +59,52 @@ class PaymentController {
     }
   }
 
+  async findOne(request: Request, response: Response) {
+    // const id = Number(request.params.id) || 0
+    const attributes = [
+      'id',
+      'poolId',
+      'contributorId',
+      'salary',
+      'leader',
+      'bonus',
+      'goal',
+      'rent',
+      'taxi',
+      'fine',
+      'total',
+      'enabled',
+      'createdAt',
+    ]
+
+    const attributesContributor = [
+      'id',
+      'name',
+      'admissionDate',
+      'wallet',
+      'poolId',
+      'email',
+    ]
+
+    try {
+      const payments = await Payment.findByPk(request.params.id, {
+        attributes,
+        include: [
+          {
+            // @ts-ignore
+            model: Contributor,
+            attributes: attributesContributor,
+            as: 'contributor',
+          },
+        ],
+      })
+
+      return response.json(payments)
+    } catch (error) {
+      return response.status(500).json({ error })
+    }
+  }
+
   async create(request: Request, response: Response) {
     const {
       contributorId,

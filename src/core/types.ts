@@ -14,9 +14,9 @@ export interface Definitions {
     name: string
   }
   Payment: {
-    id: number
-    poolId: number
-    contributorId: number
+    id?: number
+    poolId?: number
+    contributorId?: number
     salary?: number
     leader?: number
     bonus?: number
@@ -26,10 +26,11 @@ export interface Definitions {
     fine?: number
     total?: number
     enabled?: boolean
+    createdAt?: Date
     contributor?: Definitions['Contributor']
   }
   Contributor: {
-    id: number
+    id?: number
     poolId?: number
     name?: string
     admissionDate?: Date

@@ -16,6 +16,10 @@ export function getAll(data: GetPaymentsRequest) {
   return api.get<GetPaymentsResponse>(`/pools/${data.poolId}/payments`, config)
 }
 
+export function findOne(id: number) {
+  return api.get<GetLatestPaymentResponse>(`/payments/${id}`)
+}
+
 export function create(payment: Definitions['Payment']) {
   return api.post<CreatePaymentResponse>(
     `/pools/${payment.poolId}/payments`,
