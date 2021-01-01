@@ -9,7 +9,6 @@ import CurrencyInput from 'react-currency-input'
 import * as S from './styles'
 import { Definitions } from '../../core/types'
 import { ContributorService, PaymentService } from '../../services'
-import { routes } from '../../routes'
 import { useHistory } from 'react-router-dom'
 
 interface CurrencyState {
@@ -134,7 +133,7 @@ export default function NewPayment() {
     if (!contributor) return
 
     try {
-      await PaymentService.create({
+      const { data } = await PaymentService.create({
         id: 0,
         contributorId: contributor.id || 0,
         poolId,
@@ -151,7 +150,8 @@ export default function NewPayment() {
         message: 'Salvo com Sucesso!',
         description: `Matricula: ${contributor.id}, Total: ${total.mask}`,
       })
-      history.push(routes.payment)
+
+      history.push(`/print/${data.id}`)
     } catch (error) {
       notification.error({
         message: 'Erro Interno',

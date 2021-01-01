@@ -6,6 +6,7 @@ import { useReactToPrint } from 'react-to-print'
 import { Menu } from '../../components'
 import { ComponentToPrint } from '../../components/Pdf'
 import { Definitions } from '../../core/types'
+import { routes } from '../../routes'
 import { PaymentService } from '../../services'
 
 import * as S from './style'
@@ -41,7 +42,7 @@ export default function PrintPdf() {
     <Menu>
       <div>
         <S.Action>
-          <a onClick={() => history.goBack()}>
+          <a onClick={() => history.push(routes.payment)}>
             <IoMdArrowRoundBack size={30} />
           </a>
           <S.Print type="primary" onClick={handlePrint}>
@@ -53,7 +54,7 @@ export default function PrintPdf() {
           {item ? (
             <ComponentToPrint ref={componentRef} item={item} />
           ) : (
-            <div>aguardando</div>
+            <p>aguardando</p>
           )}
         </S.Content>
       </div>

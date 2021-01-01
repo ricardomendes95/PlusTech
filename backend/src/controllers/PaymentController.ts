@@ -17,6 +17,31 @@ class PaymentController {
       endDate,
     } = request.query
 
+    const attributes = [
+      'id',
+      'poolId',
+      'contributorId',
+      'salary',
+      'leader',
+      'bonus',
+      'goal',
+      'rent',
+      'taxi',
+      'fine',
+      'total',
+      'enabled',
+      'createdAt',
+    ]
+
+    const attributesContributor = [
+      'id',
+      'name',
+      'admissionDate',
+      'wallet',
+      'poolId',
+      'email',
+    ]
+
     const where: WhereOptions<PaymentAttributes> = {
       poolId,
       enabled: enabled === 'true',
@@ -42,12 +67,14 @@ class PaymentController {
     try {
       const payments = await Payment.findAll({
         where,
+        attributes,
         order: [['createdAt', orderBy.toString() === '0' ? 'DESC' : 'ASC']],
         include: [
           {
             // @ts-ignore
             model: Contributor,
             as: 'contributor',
+            attributes: attributesContributor,
             where: contributorWhere,
           },
         ],
