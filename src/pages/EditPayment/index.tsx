@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Row, Form, Col, Button, AutoComplete, notification } from 'antd'
+import { Row, Form, Col, Button, AutoComplete } from 'antd'
 import { Menu, Header } from '../../components'
 import 'moment/locale/pt-br'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -10,7 +10,7 @@ import * as S from './styles'
 import { Definitions } from '../../core/types'
 import { ContributorService, PaymentService } from '../../services'
 import { routes } from '../../routes'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 
 interface CurrencyState {
   mask: string
@@ -22,8 +22,11 @@ interface AutoCompleteType {
   id: number
 }
 
-export default function NewPayment() {
+export default function EditPayment() {
   const history = useHistory()
+  const location = useLocation<{ payment: Definitions['Payment'] }>()
+
+  const payment = location.state.payment || {}
 
   const initialCurrencyState: CurrencyState = { mask: '0.00', value: 0 }
   const poolId = Number(window.localStorage.getItem('poolId'))
@@ -46,7 +49,7 @@ export default function NewPayment() {
   const [autoCompleteValue, setAutoCompleteValue] = useState('')
   const [contributor, setContributor] = useState<
     Definitions['Contributor'] | undefined
-  >()
+  >(payment.contributor)
 
   const [contributors, setContributors] = useState<
     Definitions['Contributor'][]
@@ -68,50 +71,21 @@ export default function NewPayment() {
         })
       })
 
+      if (payment && !options.find(c => c.id === payment.contributor?.id)) {
+        options.push({
+          id: payment.contributor?.id || 0,
+          value: `${payment.contributor?.id} - ${payment.contributor?.name}`,
+        })
+
+        setAutoCompleteValue(
+          `${payment.contributor?.id} - ${payment.contributor?.name}`,
+        )
+      }
+
       setContributors(response.data)
       setAutoCompleteOptions(options)
     } catch (error) {
       console.log('[loadContributors] Error -', error)
-    }
-  }
-
-  async function loadLatestContributorPayment(contributorId: number) {
-    try {
-      const { data } = await PaymentService.latest(contributorId)
-
-      setSalary({
-        value: Number(data.salary),
-        mask: `R$ ${data.salary}`,
-      })
-      setLeader({
-        value: Number(data.leader),
-        mask: `R$ ${data.leader}`,
-      })
-      setBonus({
-        value: Number(data.bonus),
-        mask: `R$ ${data.bonus}`,
-      })
-      setGoal({
-        value: Number(data.goal),
-        mask: `R$ ${data.goal}`,
-      })
-      setRent({
-        value: Number(data.rent),
-        mask: `R$ ${data.rent}`,
-      })
-      setTaxi({
-        value: Number(data.taxi),
-        mask: `R$ ${data.taxi}`,
-      })
-      setFine({
-        value: Number(data.fine),
-        mask: `R$ ${data.fine}`,
-      })
-    } catch (error) {
-      /**
-       * No payment found for this contributor
-       */
-      console.log('[loadLatestContributorPayment] -', error)
     }
   }
 
@@ -134,8 +108,8 @@ export default function NewPayment() {
     if (!contributor) return
 
     try {
-      await PaymentService.create({
-        id: 0,
+      await PaymentService.update({
+        id: location.state.payment.id,
         contributorId: contributor.id || 0,
         poolId,
         salary: salary.value,
@@ -147,28 +121,47 @@ export default function NewPayment() {
         fine: fine.value,
         total: total.value,
       })
-      notification.success({
-        message: 'Salvo com Sucesso!',
-        description: `Matricula: ${contributor.id}, Total: ${total.mask}`,
-      })
+
       history.push(routes.payment)
     } catch (error) {
-      notification.error({
-        message: 'Erro Interno',
-        description: `erro ao tentar salvar: ${error}`,
-      })
+      console.log('Error', error)
     }
   }
 
   useEffect(() => {
     loadContributors(autoCompleteValue)
-  }, [])
 
-  useEffect(() => {
-    if (contributor) {
-      loadLatestContributorPayment(contributor.id)
-    }
-  }, [contributor])
+    const payment = location.state.payment
+
+    setSalary({
+      value: Number(payment.salary),
+      mask: `R$ ${payment.salary}`,
+    })
+    setLeader({
+      value: Number(payment.leader),
+      mask: `R$ ${payment.leader}`,
+    })
+    setBonus({
+      value: Number(payment.bonus),
+      mask: `R$ ${payment.bonus}`,
+    })
+    setGoal({
+      value: Number(payment.goal),
+      mask: `R$ ${payment.goal}`,
+    })
+    setRent({
+      value: Number(payment.rent),
+      mask: `R$ ${payment.rent}`,
+    })
+    setTaxi({
+      value: Number(payment.taxi),
+      mask: `R$ ${payment.taxi}`,
+    })
+    setFine({
+      value: Number(payment.fine),
+      mask: `R$ ${payment.fine}`,
+    })
+  }, [])
 
   useEffect(() => {
     const value =
@@ -191,12 +184,15 @@ export default function NewPayment() {
 
   return (
     <Menu active="movement">
-      <Header text="Novo Pagamento" showBackButton />
+      <Header text="Editar Pagamento" showBackButton />
 
       <S.Content>
         <S.Form
           layout="vertical"
           onFinish={handleSave}
+          initialValues={{
+            contributor: `${payment.contributor?.id} - ${payment.contributor?.name}`,
+          }}
           fields={[
             { name: ['salary'], value: salary.mask },
             { name: ['leader'], value: leader.mask },
@@ -209,7 +205,7 @@ export default function NewPayment() {
         >
           <Form.Item
             label="Nome"
-            name="Nome"
+            name="contributor"
             rules={[
               {
                 required: true,

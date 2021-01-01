@@ -13,7 +13,7 @@ import {
 import { GiCancel } from 'react-icons/gi'
 
 import * as S from './styles'
-import { useHistory } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { routes } from '../../routes'
 import { Definitions } from '../../core/types'
 import { PaymentService } from '../../services'
@@ -82,9 +82,11 @@ export default function Movement() {
       render: (text: string, record: Definitions['Payment']) => (
         <Space size="middle">
           <Tooltip title="Editar" key={record.id}>
-            <S.Action onClick={() => update(record.id)}>
+            <Link
+              to={{ pathname: routes.editPayment, state: { payment: record } }}
+            >
               <AiOutlineEdit size={20} />
-            </S.Action>
+            </Link>
           </Tooltip>
 
           <Tooltip
@@ -128,10 +130,6 @@ export default function Movement() {
     }
 
     setLoadingPayments(false)
-  }
-
-  function update(id: number) {
-    console.log('send update colaboration:', id)
   }
 
   async function handleDisable(id: number) {

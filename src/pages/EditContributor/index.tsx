@@ -24,6 +24,7 @@ import { routes } from '../../routes'
 interface ContributorParams {
   id: string
 }
+
 export default function EditContributor() {
   const params = useParams<ContributorParams>()
   const [id, setId] = useState<number>()

@@ -38,5 +38,5 @@ export function enable(id: number) {
 }
 
 export function update(contributor: Definitions['Contributor']) {
-  return api.put(`/contributors/${contributor.id}/update`, contributor)
+  return api.put(`/contributors/${contributor.id}`, contributor)
 }

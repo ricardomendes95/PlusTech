@@ -12,4 +12,6 @@ export interface GetPaymentsRequest {
 
 export type GetPaymentsResponse = Array<Definitions['Payment']>
 
+export type GetLatestPaymentResponse = Definitions['Payment']
+
 export type CreatePaymentResponse = Definitions['Payment']
