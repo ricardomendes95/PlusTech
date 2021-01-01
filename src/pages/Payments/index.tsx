@@ -201,6 +201,7 @@ export default function Movement() {
   }
 
   function handlePrintDoc(id: number) {
+    history.push(`/print/${id}`)
     console.log('send enable Movement:', id)
   }
 

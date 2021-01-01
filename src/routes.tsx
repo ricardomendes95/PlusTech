@@ -3,11 +3,11 @@ import { HashRouter, Switch, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import NewContributor from './pages/NewContributor'
-import Settings from './pages/Settings'
 import Pool from './pages/Pool'
 import Payments from './pages/Payments'
 import NewPayment from './pages/NewPayment'
 import EditContributor from './pages/EditContributor'
+import PrintPdf from './pages/PrintPdf'
 
 export const routes = {
   login: '/',
@@ -18,6 +18,7 @@ export const routes = {
   pool: '/pool',
   payment: '/payment',
   newPayment: '/payment/new',
+  print: '/print/:id',
 }
 
 const Routes: React.FC = () => {
@@ -26,12 +27,13 @@ const Routes: React.FC = () => {
       <Switch>
         <Route path={routes.login} exact component={Login} />
         <Route path={routes.home} component={Home} />
-        <Route path={routes.settings} component={Settings} />
+        <Route path={routes.settings} component={PrintPdf} />
         <Route path={routes.newContributor} component={NewContributor} />
         <Route path={routes.editContributor} component={EditContributor} />
         <Route path={routes.pool} component={Pool} />
         <Route path={routes.newPayment} component={NewPayment} />
         <Route path={routes.payment} component={Payments} />
+        <Route path={routes.print} component={PrintPdf} />
       </Switch>
     </HashRouter>
   )
