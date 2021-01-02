@@ -1,6 +1,8 @@
-import { DatePicker, Radio } from 'antd'
+import { ConfigProvider, DatePicker, Radio } from 'antd'
 import React, { useEffect, useState } from 'react'
 import moment from 'moment'
+import 'moment/locale/pt-br'
+import locale from 'antd/lib/locale/pt_BR'
 
 import * as S from './styles'
 
@@ -51,14 +53,16 @@ export const HeaderContent = ({
             style={{ width: 200 }}
           />
         ) : (
-          <DatePicker.RangePicker
-            defaultValue={[
-              moment(new Date(), dateFormat),
-              moment(new Date(), dateFormat),
-            ]}
-            format={dateFormat}
-            onChange={handleDateChange}
-          />
+          <ConfigProvider locale={locale}>
+            <DatePicker.RangePicker
+              defaultValue={[
+                moment(new Date(), dateFormat),
+                moment(new Date(), dateFormat),
+              ]}
+              format={dateFormat}
+              onChange={handleDateChange}
+            />
+          </ConfigProvider>
         )}
         <Radio.Group
           options={searchOptions}
