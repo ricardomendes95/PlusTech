@@ -1,6 +1,7 @@
 import Contributor from './Contributor'
 import Pool from './Pool'
 import Payment from './Payment'
+import User from './User'
 
 Pool.hasMany(Contributor, {
   as: 'contributors',
@@ -26,4 +27,4 @@ Payment.belongsTo(Contributor, {
   as: 'contributor',
 })
 
-export { Pool, Contributor, Payment }
+export { User, Pool, Contributor, Payment }

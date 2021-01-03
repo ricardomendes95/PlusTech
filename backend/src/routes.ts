@@ -12,6 +12,7 @@ const routes = Router()
  * Auth
  */
 routes.post('/login', AuthController.login)
+routes.put('/users', AuthController.update)
 
 /**
  * Pool
