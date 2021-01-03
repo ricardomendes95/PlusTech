@@ -146,6 +146,7 @@ export default function NewPayment() {
         fine: fine.value,
         total: total.value,
       })
+
       notification.success({
         message: 'Salvo com Sucesso!',
         description: `Matricula: ${contributor.id}, Total: ${total.mask}`,
