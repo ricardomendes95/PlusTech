@@ -13,6 +13,7 @@ const routes = Router()
  */
 routes.post('/login', AuthController.login)
 routes.put('/users', AuthController.update)
+routes.get('/users', AuthController.show)
 
 /**
  * Pool

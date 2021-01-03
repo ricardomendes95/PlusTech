@@ -9,6 +9,7 @@ import NewPayment from './pages/NewPayment'
 import EditContributor from './pages/EditContributor'
 import PrintPdf from './pages/PrintPdf'
 import EditPayment from './pages/EditPayment'
+import Settings from './pages/Settings'
 
 export const routes = {
   login: '/',
@@ -29,7 +30,7 @@ const Routes: React.FC = () => {
       <Switch>
         <Route path={routes.login} exact component={Login} />
         <Route path={routes.home} component={Home} />
-        <Route path={routes.settings} component={PrintPdf} />
+        <Route path={routes.settings} component={Settings} />
         <Route path={routes.newContributor} component={NewContributor} />
         <Route path={routes.editContributor} component={EditContributor} />
         <Route path={routes.pool} component={Pool} />

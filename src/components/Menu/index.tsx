@@ -7,6 +7,7 @@ import {
   AiOutlineSwap,
   // AiOutlineSetting,
   AiOutlineLogout,
+  AiOutlineSetting,
 } from 'react-icons/ai'
 import { Link } from 'react-router-dom'
 import { routes } from '../../routes'
@@ -62,12 +63,15 @@ export const Menu: React.FC<MenuProps> = ({ active = 'none', children }) => {
           </Link>
         </S.MenuItem>
 
-        {/* <S.MenuItem active={active === 'settings'}>
+        <S.MenuItem active={active === 'settings'}>
           <Link to={routes.settings}>
-            <AiOutlineSetting style={{ paddingRight: open ? '16px' : '0px' }} size={open ? 45 : 50} />
+            <AiOutlineSetting
+              style={{ paddingRight: open ? '16px' : '0px' }}
+              size={open ? 45 : 50}
+            />
             {open && <span>Configuração</span>}
           </Link>
-        </S.MenuItem> */}
+        </S.MenuItem>
 
         <S.MenuItem active={false}>
           <Link to={routes.login}>

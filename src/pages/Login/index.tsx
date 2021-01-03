@@ -1,5 +1,5 @@
-import React, { FormEvent, useState } from 'react'
-import { Button } from 'antd'
+import React, { FormEvent, useEffect, useState } from 'react'
+import { Button, notification } from 'antd'
 
 import * as S from './styles'
 import { useHistory } from 'react-router-dom'
@@ -10,9 +10,23 @@ import { routes } from '../../routes'
 export default function Login() {
   const history = useHistory()
 
-  const [user, setUser] = useState('admin')
-  const [password, setPassword] = useState('admin')
+  const [user, setUser] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [passwordValid, setPasswordValid] = useState('')
+
+  async function loadUser() {
+    try {
+      const { data } = await AuthService.show()
+      setUser(data.login)
+      setPasswordValid(data.password)
+    } catch (error) {
+      notification.error({
+        message: 'Erro Ao obter Dados do Banco',
+        description: error,
+      })
+    }
+  }
 
   async function handleLogin(event: FormEvent) {
     event.preventDefault()
@@ -22,15 +36,27 @@ export default function Login() {
       return
     }
 
+    if (passwordValid !== password) {
+      setError('Senha Inválida!')
+    }
+
     try {
       await AuthService.login({ login: user, password })
 
       history.push(routes.pool)
     } catch (error) {
       console.log('Error', error)
+      notification.error({
+        message: 'Erro ao fazer login',
+        description: error,
+      })
       // setError(error)
     }
   }
+
+  useEffect(() => {
+    loadUser()
+  }, [])
 
   return (
     <S.Container>

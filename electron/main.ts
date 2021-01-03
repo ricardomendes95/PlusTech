@@ -15,6 +15,8 @@ function createWindow() {
     height: 700,
     backgroundColor: '#191622',
     title: 'PlusTech',
+    // eslint-disable-next-line no-path-concat
+    icon: __dirname + '/icone.ico',
     webPreferences: {
       nodeIntegration: true,
     },

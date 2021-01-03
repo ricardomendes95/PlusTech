@@ -13,7 +13,10 @@ class AuthController {
         })
       }
 
-      const user = await User.findOne({ where: { login } })
+      const user = await User.findOne({
+        where: { login },
+        attributes: ['login', 'password'],
+      })
 
       if (!user) {
         return response.status(404).json({
@@ -45,7 +48,10 @@ class AuthController {
     }
 
     try {
-      const user = await User.findOne({ where: { login: oldLogin } })
+      const user = await User.findOne({
+        where: { login: oldLogin },
+        attributes: ['login', 'password'],
+      })
 
       if (!user) {
         return response.status(404).json({
@@ -74,6 +80,18 @@ class AuthController {
       )
 
       return response.json({ success: 'Login e senha alterados com sucesso' })
+    } catch (error) {
+      return response.status(500).json(error)
+    }
+  }
+
+  show = async (request: Request, response: Response) => {
+    try {
+      const id = 1
+      const user = await User.findByPk(id, {
+        attributes: ['login', 'password'],
+      })
+      response.status(200).json(user)
     } catch (error) {
       return response.status(500).json(error)
     }
