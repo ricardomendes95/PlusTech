@@ -14,20 +14,19 @@ interface PrintParams {
   id: string
 }
 export default function PrintPdf() {
-  const componentRef = useRef()
+  const componentRef = useRef<ComponentToPrint | null>(null)
   const history = useHistory()
   const params = useParams<PrintParams>()
 
   const [item, setItem] = useState<Definitions['Payment']>()
 
   const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
+    content: () => componentRef.current || null,
   })
 
   async function loadContributor() {
     try {
       const { data } = await PaymentService.findOne(Number(params?.id))
-      console.log('ta procurando', params.id, data)
       setItem(data)
     } catch (error) {
       console.log(error)

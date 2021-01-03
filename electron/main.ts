@@ -14,6 +14,7 @@ function createWindow() {
     width: 1100,
     height: 700,
     backgroundColor: '#191622',
+    title: 'PlustTech',
     webPreferences: {
       nodeIntegration: true,
     },

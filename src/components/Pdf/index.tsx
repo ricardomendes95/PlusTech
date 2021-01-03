@@ -1,6 +1,12 @@
 import React from 'react'
+import { Definitions } from '../../core/types'
 import * as S from './styles'
-export class ComponentToPrint extends React.Component {
+
+interface ComponentToPrintProps {
+  item: Definitions['Payment']
+}
+
+export class ComponentToPrint extends React.Component<ComponentToPrintProps> {
   constructor(props: any) {
     super(props)
     this.matricula = props?.item.contributor?.id

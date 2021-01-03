@@ -167,7 +167,7 @@ export default function Movement() {
         }),
       )
       notification.success({
-        message: 'Desativado!',
+        message: 'Ativado!',
       })
     } catch (error) {
       console.log('[handleEnable] - Error', error)
