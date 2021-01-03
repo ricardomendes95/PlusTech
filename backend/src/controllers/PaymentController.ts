@@ -7,17 +7,11 @@ import { ContributorAttributes } from '../models/Contributor'
 import { PaymentAttributes } from '../models/Payment'
 
 class PaymentController {
-  async index(request: Request, response: Response) {
-    const poolId = Number(request.params.poolId) || 0
-    const {
-      enabled = 'true',
-      orderBy = '0',
-      contributor,
-      startDate,
-      endDate,
-    } = request.query
+  private attributes: string[]
+  private contributorAttributes: string[]
 
-    const attributes = [
+  constructor() {
+    this.attributes = [
       'id',
       'poolId',
       'contributorId',
@@ -33,14 +27,26 @@ class PaymentController {
       'createdAt',
     ]
 
-    const attributesContributor = [
+    this.contributorAttributes = [
       'id',
       'name',
       'admissionDate',
       'wallet',
       'poolId',
       'email',
+      'enabled',
     ]
+  }
+
+  index = async (request: Request, response: Response) => {
+    const poolId = Number(request.params.poolId) || 0
+    const {
+      enabled = 'true',
+      orderBy = '0',
+      contributor,
+      startDate,
+      endDate,
+    } = request.query
 
     const where: WhereOptions<PaymentAttributes> = {
       poolId,
@@ -67,14 +73,14 @@ class PaymentController {
     try {
       const payments = await Payment.findAll({
         where,
-        attributes,
+        attributes: this.attributes,
         order: [['createdAt', orderBy.toString() === '0' ? 'DESC' : 'ASC']],
         include: [
           {
             // @ts-ignore
             model: Contributor,
             as: 'contributor',
-            attributes: attributesContributor,
+            attributes: this.contributorAttributes,
             where: contributorWhere,
           },
         ],
@@ -86,41 +92,15 @@ class PaymentController {
     }
   }
 
-  async findOne(request: Request, response: Response) {
-    // const id = Number(request.params.id) || 0
-    const attributes = [
-      'id',
-      'poolId',
-      'contributorId',
-      'salary',
-      'leader',
-      'bonus',
-      'goal',
-      'rent',
-      'taxi',
-      'fine',
-      'total',
-      'enabled',
-      'createdAt',
-    ]
-
-    const attributesContributor = [
-      'id',
-      'name',
-      'admissionDate',
-      'wallet',
-      'poolId',
-      'email',
-    ]
-
+  findOne = async (request: Request, response: Response) => {
     try {
       const payments = await Payment.findByPk(request.params.id, {
-        attributes,
+        attributes: this.attributes,
         include: [
           {
             // @ts-ignore
             model: Contributor,
-            attributes: attributesContributor,
+            attributes: this.contributorAttributes,
             as: 'contributor',
           },
         ],
@@ -132,7 +112,7 @@ class PaymentController {
     }
   }
 
-  async create(request: Request, response: Response) {
+  create = async (request: Request, response: Response) => {
     const {
       contributorId,
       salary = 0.0,
@@ -169,13 +149,25 @@ class PaymentController {
         enabled,
       })
 
-      return response.status(201).json(payment)
+      const result = await Payment.findByPk(payment.id, {
+        attributes: this.attributes,
+        include: [
+          {
+            // @ts-ignore
+            model: Contributor,
+            attributes: this.contributorAttributes,
+            as: 'contributor',
+          },
+        ],
+      })
+
+      return response.status(201).json(result)
     } catch (error) {
       return response.status(500).json({ error })
     }
   }
 
-  async update(request: Request, response: Response) {
+  update = async (request: Request, response: Response) => {
     const { id } = request.params
     const {
       contributorId,
@@ -196,7 +188,9 @@ class PaymentController {
     }
 
     try {
-      const payment = await Payment.findByPk(id)
+      const payment = await Payment.findByPk(id, {
+        attributes: this.attributes,
+      })
 
       if (!payment) {
         return response.status(404).json({
@@ -204,17 +198,21 @@ class PaymentController {
         })
       }
 
-      payment.contributorId = contributorId
-      payment.salary = salary
-      payment.leader = leader
-      payment.bonus = bonus
-      payment.goal = goal
-      payment.rent = rent
-      payment.taxi = taxi
-      payment.fine = fine
-      payment.total = total
-
-      await payment.save()
+      await Payment.update(
+        {
+          contributorId,
+          salary,
+          leader,
+          bonus,
+          goal,
+          rent,
+          taxi,
+          fine,
+          total,
+          enabled: payment.enabled,
+        },
+        { where: { id } },
+      )
 
       return response.send()
     } catch (error) {
@@ -222,21 +220,34 @@ class PaymentController {
     }
   }
 
-  async disable(request: Request, response: Response) {
+  disable = async (request: Request, response: Response) => {
     const { id } = request.params
 
     try {
-      const payment = await Payment.findByPk(id)
+      const payment = await Payment.findByPk(id, {
+        attributes: this.attributes,
+      })
 
       if (!payment) {
         return response.status(404).json({
           error: 'Pagamento não encontrado',
         })
       }
-
-      payment.enabled = false
-
-      await payment.save()
+      await Payment.update(
+        {
+          contributorId: payment.contributorId,
+          salary: payment.salary,
+          leader: payment.leader,
+          bonus: payment.bonus,
+          goal: payment.goal,
+          rent: payment.rent,
+          taxi: payment.taxi,
+          fine: payment.fine,
+          total: payment.total,
+          enabled: false,
+        },
+        { where: { id } },
+      )
 
       return response.send()
     } catch (error) {
@@ -244,11 +255,13 @@ class PaymentController {
     }
   }
 
-  async enable(request: Request, response: Response) {
+  enable = async (request: Request, response: Response) => {
     const { id } = request.params
 
     try {
-      const payment = await Payment.findByPk(id)
+      const payment = await Payment.findByPk(id, {
+        attributes: this.attributes,
+      })
 
       if (!payment) {
         return response.status(404).json({
@@ -256,9 +269,21 @@ class PaymentController {
         })
       }
 
-      payment.enabled = true
-
-      await payment.save()
+      await Payment.update(
+        {
+          contributorId: payment.contributorId,
+          salary: payment.salary,
+          leader: payment.leader,
+          bonus: payment.bonus,
+          goal: payment.goal,
+          rent: payment.rent,
+          taxi: payment.taxi,
+          fine: payment.fine,
+          total: payment.total,
+          enabled: true,
+        },
+        { where: { id } },
+      )
 
       return response.send()
     } catch (error) {
@@ -266,11 +291,12 @@ class PaymentController {
     }
   }
 
-  async latest(request: Request, response: Response) {
+  latest = async (request: Request, response: Response) => {
     const contributorId = Number(request.params.contributorId) || 0
 
     try {
       const payment = await Payment.findOne({
+        attributes: this.attributes,
         where: {
           contributorId,
           enabled: true,

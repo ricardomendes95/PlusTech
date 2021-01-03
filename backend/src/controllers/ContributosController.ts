@@ -5,12 +5,24 @@ import { Contributor } from '../models'
 import { ContributorAttributes } from '../models/Contributor'
 
 class ContributorController {
-  async index(request: Request, response: Response) {
+  private attributes: string[]
+
+  constructor() {
+    this.attributes = [
+      'id',
+      'name',
+      'admissionDate',
+      'wallet',
+      'poolId',
+      'email',
+      'enabled',
+    ]
+  }
+
+  index = async (request: Request, response: Response) => {
     const { enabled, orderBy = '0', name, startDate, endDate } = request.query
-    console.log(name, startDate, endDate, enabled)
 
     try {
-      const attributes = ['id', 'name', 'admissionDate', 'enabled']
       const where: WhereOptions<ContributorAttributes> = {
         poolId: Number(request.params.poolId) || 0,
         enabled: enabled === 'true',
@@ -35,7 +47,7 @@ class ContributorController {
 
       const pools = await Contributor.findAll({
         where,
-        attributes,
+        attributes: this.attributes,
         order: [['createdAt', orderBy.toString() === '0' ? 'DESC' : 'ASC']],
       })
 
@@ -45,28 +57,19 @@ class ContributorController {
     }
   }
 
-  async findByPK(request: Request, response: Response) {
+  findByPK = async (request: Request, response: Response) => {
     try {
-      const attributes = [
-        'id',
-        'name',
-        'admissionDate',
-        'wallet',
-        'poolId',
-        'email',
-      ]
-
-      const pools = await Contributor.findByPk(request.params.id, {
-        attributes,
+      const contributor = await Contributor.findByPk(request.params.id, {
+        attributes: this.attributes,
       })
 
-      return response.json(pools)
+      return response.json(contributor)
     } catch (error) {
       return response.status(500).json({ error })
     }
   }
 
-  async create(request: Request, response: Response) {
+  create = async (request: Request, response: Response) => {
     const { poolId, name, admissionDate, email, wallet, enabled } = request.body
 
     if (!name || !admissionDate || !poolId) {
@@ -91,14 +94,17 @@ class ContributorController {
         enabled,
       })
 
-      return response.status(201).json(contributor)
+      const result = await Contributor.findByPk(contributor.id, {
+        attributes: this.attributes,
+      })
+
+      return response.status(201).json(result)
     } catch (error) {
-      console.log(error)
       return response.status(500).json({ error })
     }
   }
 
-  async update(request: Request, response: Response) {
+  update = async (request: Request, response: Response) => {
     const { poolId, name, admissionDate, email, wallet, enabled } = request.body
 
     const id = request.params.id
@@ -116,7 +122,7 @@ class ContributorController {
     }
 
     try {
-      const contributor = await Contributor.update(
+      await Contributor.update(
         {
           poolId,
           name,
@@ -128,25 +134,30 @@ class ContributorController {
         { where: { id } },
       )
 
-      return response.status(201).json(contributor)
+      return response.send()
     } catch (error) {
-      console.log(error)
       return response.status(500).json({ error })
     }
   }
 
-  async disable(request: Request, response: Response) {
+  disable = async (request: Request, response: Response) => {
+    const id = Number(request.params.id)
     try {
-      const contributor = await Contributor.findByPk(Number(request.params.id))
+      const contributor = await Contributor.findByPk(id, {
+        attributes: this.attributes,
+      })
 
       if (!contributor) {
         return response.status(404).json({
           error: 'Colaborador não encontrado',
         })
       }
-
-      contributor.enabled = false
-      await contributor.save()
+      await Contributor.update(
+        {
+          enabled: false,
+        },
+        { where: { id } },
+      )
 
       return response.send()
     } catch (error) {
@@ -154,9 +165,12 @@ class ContributorController {
     }
   }
 
-  async enable(request: Request, response: Response) {
+  enable = async (request: Request, response: Response) => {
+    const id = Number(request.params.id)
     try {
-      const contributor = await Contributor.findByPk(Number(request.params.id))
+      const contributor = await Contributor.findByPk(id, {
+        attributes: this.attributes,
+      })
 
       if (!contributor) {
         return response.status(404).json({
@@ -164,8 +178,12 @@ class ContributorController {
         })
       }
 
-      contributor.enabled = true
-      await contributor.save()
+      await Contributor.update(
+        {
+          enabled: true,
+        },
+        { where: { id } },
+      )
 
       return response.send()
     } catch (error) {

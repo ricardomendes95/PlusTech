@@ -4,7 +4,7 @@ import { Pool } from '../models'
 class PoolController {
   async index(request: Request, response: Response) {
     try {
-      const pools = await Pool.findAll()
+      const pools = await Pool.findAll({ attributes: ['id', 'name'] })
 
       return response.json(pools)
     } catch (error) {
@@ -24,15 +24,19 @@ class PoolController {
     try {
       const pool = await Pool.create({ name })
 
-      return response.status(201).json(pool)
+      const result = await Pool.findByPk(pool.id, {
+        attributes: ['id', 'name'],
+      })
+
+      return response.status(201).json(result)
     } catch (error) {
-      console.log(error)
       return response.status(500).json({ error })
     }
   }
 
   async update(request: Request, response: Response) {
     const { name } = request.body
+    const id = Number(request.params.id)
 
     if (!name) {
       return response.json({
@@ -41,7 +45,9 @@ class PoolController {
     }
 
     try {
-      const pool = await Pool.findByPk(request.params.id)
+      const pool = await Pool.findByPk(id, {
+        attributes: ['id', 'name'],
+      })
 
       if (!pool) {
         return response.status(404).json({
@@ -49,9 +55,7 @@ class PoolController {
         })
       }
 
-      pool.name = name
-
-      await pool.save()
+      await Pool.update({ name }, { where: { id } })
 
       return response.send()
     } catch (error) {
