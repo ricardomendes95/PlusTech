@@ -13,3 +13,7 @@ export function show() {
 export function update(user: PutUserRequest) {
   return api.put('/users', user)
 }
+
+export function create(user: Definitions['User']) {
+  return api.post('/users', user)
+}

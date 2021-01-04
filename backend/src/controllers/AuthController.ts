@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { User } from '../models'
-import * as BCrypt from '../utils/bcrypt'
+// import * as BCrypt from '../utils/bcrypt'
 
 class AuthController {
   login = async (request: Request, response: Response) => {
@@ -13,24 +13,23 @@ class AuthController {
         })
       }
 
-      const user = await User.findOne({
-        where: { login },
-        attributes: ['login', 'password'],
-      })
+      // const user = await User.findOne({
+      //   where: { login },
+      // })
 
-      if (!user) {
-        return response.status(404).json({
-          message: 'E-mail/senha inválido(s)',
-        })
-      }
+      // if (!user) {
+      //   return response.status(404).json({
+      //     message: 'E-mail/senha inválido(s)',
+      //   })
+      // }
 
-      const comparePassword = await BCrypt.compare(password, user.password)
+      // const comparePassword = await BCrypt.compare(password, user.password)
 
-      if (!comparePassword) {
-        return response.status(403).json({
-          message: 'E-mail/senha inválido(s)',
-        })
-      }
+      // if (!comparePassword) {
+      //   return response.status(403).json({
+      //     message: 'E-mail/senha inválido(s)',
+      //   })
+      // }
 
       return response.send()
     } catch (error) {
@@ -59,20 +58,20 @@ class AuthController {
         })
       }
 
-      const comparePassword = await BCrypt.compare(oldPassword, user.password)
+      // const comparePassword = await BCrypt.compare(oldPassword, user.password)
 
-      if (!comparePassword) {
-        return response.status(403).json({
-          error: 'Senha antiga inválida',
-        })
-      }
+      // if (!comparePassword) {
+      //   return response.status(403).json({
+      //     error: 'Senha antiga inválida',
+      //   })
+      // }
 
-      const password = await BCrypt.hash(newPassword)
+      // const password = await BCrypt.hash(newPassword)
 
       await User.update(
         {
           login: newLogin,
-          password,
+          password: newPassword,
         },
         {
           where: { login: oldLogin },
@@ -91,6 +90,16 @@ class AuthController {
       const user = await User.findByPk(id, {
         attributes: ['login', 'password'],
       })
+      response.status(200).json(user)
+    } catch (error) {
+      return response.status(500).json(error)
+    }
+  }
+
+  create = async (request: Request, response: Response) => {
+    const { login, password } = request.body
+    try {
+      const user = await User.create({ login, password })
       response.status(200).json(user)
     } catch (error) {
       return response.status(500).json(error)

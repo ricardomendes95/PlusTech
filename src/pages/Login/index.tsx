@@ -18,6 +18,18 @@ export default function Login() {
   async function loadUser() {
     try {
       const { data } = await AuthService.show()
+
+      if (!data) {
+        const user = await AuthService.create({
+          login: 'admin',
+          password: 'admin',
+        })
+        setUser(user.data.login)
+        setPassword(user.data.password)
+        setPasswordValid(user.data.password)
+        return
+      }
+
       setUser(data.login)
       setPasswordValid(data.password)
     } catch (error) {
@@ -36,8 +48,11 @@ export default function Login() {
       return
     }
 
+    console.log('senhas', passwordValid, password)
+
     if (passwordValid !== password) {
       setError('Senha Inválida!')
+      return
     }
 
     try {

@@ -1,6 +1,8 @@
 import { Form, Input, notification } from 'antd'
 import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { Menu, Header, Alert } from '../../components'
+import { routes } from '../../routes'
 import { AuthService } from '../../services'
 import * as S from './styles'
 
@@ -12,6 +14,7 @@ export default function Settings() {
   const [newPassword, setnewPassword] = useState('')
   const [newPasswordAfirm, setnewPasswordAfirm] = useState('')
   const [error, setError] = useState('')
+  const history = useHistory()
 
   async function handleSave() {
     setError('')
@@ -47,6 +50,7 @@ export default function Settings() {
       notification.success({
         message: 'Salvo',
       })
+      history.push(routes.login)
     } catch (error) {
       notification.error({
         message: 'Erro Salvar',
