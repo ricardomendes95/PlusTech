@@ -28,6 +28,8 @@ export interface Definitions {
     enabled?: boolean
     createdAt?: Date
     contributor?: Definitions['Contributor']
+    additionalFines?: Definitions['AdditionalAttributesFinal'][]
+    additionalAids?: Definitions['AdditionalAttributesFinal'][]
   }
   Contributor: {
     id?: number
@@ -38,5 +40,21 @@ export interface Definitions {
     wallet?: string
     enabled?: boolean
     payments?: Definitions['Payment'][]
+  }
+  AdditionalAttributes: {
+    id?: number
+    title?: string
+    value?: Definitions['CurrencyState']
+  }
+
+  AdditionalAttributesFinal: {
+    id?: number
+    title?: string
+    value?: number
+  }
+
+  CurrencyState: {
+    mask: string
+    value: number
   }
 }

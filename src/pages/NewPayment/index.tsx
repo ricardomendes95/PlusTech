@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Row, Form, Col, Button, AutoComplete, notification } from 'antd'
+import { Row, Form, Col, Button, AutoComplete, notification, Input } from 'antd'
 import { Menu, Header } from '../../components'
 import 'moment/locale/pt-br'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import CurrencyInput from 'react-currency-input'
+import { FaCheck, FaPlus } from 'react-icons/fa'
+import { IoCloseSharp } from 'react-icons/io5'
 
 import * as S from './styles'
 import { Definitions } from '../../core/types'
@@ -21,6 +23,15 @@ interface AutoCompleteType {
   id: number
 }
 
+interface additionalField {
+  title?: string
+  value?: CurrencyState
+}
+
+interface newFields {
+  field: additionalField
+}
+
 export default function NewPayment() {
   const history = useHistory()
 
@@ -34,8 +45,25 @@ export default function NewPayment() {
   const [rent, setRent] = useState<CurrencyState>(initialCurrencyState)
   const [taxi, setTaxi] = useState<CurrencyState>(initialCurrencyState)
   const [fine, setFine] = useState<CurrencyState>(initialCurrencyState)
+
+  const [additionalValueTemp, setAdditionalValueTemp] = useState('')
+  const [addAdditionalValue, setAddAdditionalValue] = useState(false)
+
+  const [additionalFines, setAdditionalFines] = useState<
+    Definitions['AdditionalAttributes'][]
+  >([])
+
+  const [additionalAids, setAdditionalAids] = useState<
+    Definitions['AdditionalAttributes'][]
+  >([])
+  const [fineTemp, setFineTemp] = useState('')
+  const [addFine, setAddFine] = useState(false)
+
+  const [focusAux, setFocusAux] = useState(false)
+  const [focus, setFocus] = useState(false)
+
   const [total, setTotal] = useState<CurrencyState>({
-    mask: 'R$ 0.00',
+    mask: '$ 0.00',
     value: 0,
   })
 
@@ -62,7 +90,7 @@ export default function NewPayment() {
 
       response.data.forEach(c => {
         options.push({
-          id: c.id,
+          id: Number(c.id),
           value: `${c.id} - ${c.name}`,
         })
       })
@@ -70,7 +98,10 @@ export default function NewPayment() {
       setContributors(response.data)
       setAutoCompleteOptions(options)
     } catch (error) {
-      console.log('[loadContributors] Error -', error)
+      notification.error({
+        message: 'Salvo com Sucesso!',
+        description: `[loadContributors] Error - ${error}`,
+      })
     }
   }
 
@@ -80,37 +111,40 @@ export default function NewPayment() {
 
       setSalary({
         value: Number(data.salary),
-        mask: `R$ ${data.salary}`,
+        mask: `$ ${data.salary}`,
       })
       setLeader({
         value: Number(data.leader),
-        mask: `R$ ${data.leader}`,
+        mask: `$ ${data.leader}`,
       })
       setBonus({
         value: Number(data.bonus),
-        mask: `R$ ${data.bonus}`,
+        mask: `$ ${data.bonus}`,
       })
       setGoal({
         value: Number(data.goal),
-        mask: `R$ ${data.goal}`,
+        mask: `$ ${data.goal}`,
       })
       setRent({
         value: Number(data.rent),
-        mask: `R$ ${data.rent}`,
+        mask: `$ ${data.rent}`,
       })
       setTaxi({
         value: Number(data.taxi),
-        mask: `R$ ${data.taxi}`,
+        mask: `$ ${data.taxi}`,
       })
       setFine({
         value: Number(data.fine),
-        mask: `R$ ${data.fine}`,
+        mask: `$ ${data.fine}`,
       })
     } catch (error) {
       /**
        * No payment found for this contributor
        */
-      console.log('[loadLatestContributorPayment] -', error)
+      notification.error({
+        message: 'Salvo com Sucesso!',
+        description: `[loadLatestContributorPayment] Error - ${error}`,
+      })
     }
   }
 
@@ -129,8 +163,61 @@ export default function NewPayment() {
     setAutoCompleteValue(data)
   }
 
+  function handleFinesChange(value: additionalField) {
+    setAdditionalFines(prevState =>
+      prevState.map(p => (p.title === value.title ? value : p)),
+    )
+  }
+
+  function handleAdditionalValueChange(value: additionalField) {
+    setAdditionalAids(prevState =>
+      prevState.map(p => (p.title === value.title ? value : p)),
+    )
+  }
+
+  function handleFine() {
+    if (!additionalFines.find(f => f.title === fineTemp)) {
+      additionalFines.push({ title: fineTemp, value: initialCurrencyState })
+    }
+    setFineTemp('')
+    setAddFine(false)
+  }
+
+  function handleAdditionalValue() {
+    if (!additionalAids.find(f => f.title === additionalValueTemp)) {
+      additionalAids.push({
+        title: additionalValueTemp,
+        value: initialCurrencyState,
+      })
+    }
+    setAdditionalValueTemp('')
+    setAddAdditionalValue(false)
+  }
+
   async function handleSave() {
     if (!contributor) return
+    const additionalAidsFinal: Definitions['AdditionalAttributesFinal'][] = []
+    const additionalFinesFinal: Definitions['AdditionalAttributesFinal'][] = []
+
+    if (additionalAids) {
+      additionalAids.map(aid => {
+        additionalAidsFinal.push({
+          id: aid.id,
+          title: aid.title,
+          value: aid.value?.value,
+        })
+      })
+    }
+
+    if (additionalFines) {
+      additionalFines.map(fine => {
+        additionalFinesFinal.push({
+          id: fine.id,
+          title: fine.title,
+          value: fine.value?.value,
+        })
+      })
+    }
 
     try {
       const { data } = await PaymentService.create({
@@ -144,6 +231,8 @@ export default function NewPayment() {
         rent: rent.value,
         taxi: taxi.value,
         fine: fine.value,
+        additionalFines: additionalFinesFinal,
+        additionalAids: additionalAidsFinal,
         total: total.value,
       })
 
@@ -167,19 +256,30 @@ export default function NewPayment() {
 
   useEffect(() => {
     if (contributor) {
-      loadLatestContributorPayment(contributor.id)
+      loadLatestContributorPayment(Number(contributor.id))
     }
   }, [contributor])
 
   useEffect(() => {
+    let fineValue = fine.value
+    additionalFines.forEach(f => {
+      fineValue += Number(f.value?.value)
+    })
+
+    let auxValue = 0
+    additionalAids.forEach(f => {
+      auxValue += Number(f.value?.value)
+    })
+
     const value =
       salary.value +
       leader.value +
       bonus.value +
       goal.value +
       rent.value +
+      auxValue +
       taxi.value -
-      fine.value
+      fineValue
 
     setTotal({
       value,
@@ -188,7 +288,17 @@ export default function NewPayment() {
         currency: 'BRL',
       }),
     })
-  }, [salary, leader, bonus, goal, rent, taxi, fine])
+  }, [
+    salary,
+    leader,
+    bonus,
+    goal,
+    rent,
+    taxi,
+    fine,
+    additionalFines,
+    additionalAids,
+  ])
 
   return (
     <Menu active="movement">
@@ -236,7 +346,7 @@ export default function NewPayment() {
                   onChangeEvent={(_: any, mask: any, value: any) =>
                     setSalary({ mask, value })
                   }
-                  prefix="R$ "
+                  prefix="$ "
                   className="ant-input"
                 />
               </Form.Item>
@@ -255,7 +365,7 @@ export default function NewPayment() {
                   onChangeEvent={(_: any, mask: any, value: any) =>
                     setLeader({ mask, value })
                   }
-                  prefix="R$ "
+                  prefix="$ "
                   className="ant-input"
                 />
               </Form.Item>
@@ -268,7 +378,7 @@ export default function NewPayment() {
                   onChangeEvent={(_: any, mask: any, value: any) =>
                     setBonus({ mask, value })
                   }
-                  prefix="R$ "
+                  prefix="$ "
                   className="ant-input"
                 />
               </Form.Item>
@@ -281,7 +391,7 @@ export default function NewPayment() {
                   onChangeEvent={(_: any, mask: any, value: any) =>
                     setGoal({ mask, value })
                   }
-                  prefix="R$ "
+                  prefix="$ "
                   className="ant-input"
                 />
               </Form.Item>
@@ -300,7 +410,7 @@ export default function NewPayment() {
                   onChangeEvent={(_: any, mask: any, value: any) =>
                     setRent({ mask, value })
                   }
-                  prefix="R$ "
+                  prefix="$ "
                   className="ant-input"
                 />
               </Form.Item>
@@ -313,12 +423,78 @@ export default function NewPayment() {
                   onChangeEvent={(_: any, mask: any, value: any) =>
                     setTaxi({ mask, value })
                   }
-                  prefix="R$ "
+                  prefix="$ "
                   className="ant-input"
                 />
               </Form.Item>
             </Col>
 
+            {!addAdditionalValue && (
+              <S.ColPlus sm={10} md={6} lg={5} xl={5}>
+                <Button
+                  onClick={() => {
+                    setAddAdditionalValue(true)
+                    setFocusAux(true)
+                  }}
+                  type="primary"
+                >
+                  <FaPlus />
+                </Button>
+              </S.ColPlus>
+            )}
+          </Row>
+
+          {additionalAids.length > 0 &&
+            additionalAids.map(addValue => (
+              <Row gutter={[16, 0]} key={addValue.title}>
+                <Col sm={10} md={6} lg={5} xl={5}>
+                  <Form.Item label={addValue.title} name={addValue.title}>
+                    <CurrencyInput
+                      value={addValue.value?.mask}
+                      onChangeEvent={(_: any, mask: any, value: any) =>
+                        handleAdditionalValueChange({
+                          title: addValue.title,
+                          value: { mask, value },
+                        })
+                      }
+                      prefix="$ "
+                      className="ant-input"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            ))}
+
+          {addAdditionalValue && (
+            <Row>
+              <Col sm={8} md={6} lg={8} xl={6}>
+                <S.NewField>
+                  <Input
+                    onChange={e => setAdditionalValueTemp(e.target.value)}
+                    placeholder="Ex: Auxilio adicional"
+                    autoFocus={focusAux}
+                    onPressEnter={handleAdditionalValue}
+                  />
+                  <Button
+                    type="primary"
+                    danger
+                    onClick={() => setAddAdditionalValue(false)}
+                  >
+                    <IoCloseSharp size={20} />
+                  </Button>
+                  <Button type="primary" onClick={handleAdditionalValue}>
+                    <FaCheck />
+                  </Button>
+                </S.NewField>
+              </Col>
+            </Row>
+          )}
+
+          <h2>Multas</h2>
+
+          <S.Divider />
+
+          <Row gutter={[16, 0]}>
             <Col sm={10} md={6} lg={5} xl={5}>
               <Form.Item label="Multas" name="fine">
                 <CurrencyInput
@@ -326,12 +502,71 @@ export default function NewPayment() {
                   onChangeEvent={(_: any, mask: any, value: any) =>
                     setFine({ mask, value })
                   }
-                  prefix="R$ "
+                  prefix="$ "
                   className="ant-input"
                 />
               </Form.Item>
             </Col>
+            {!addFine && (
+              <S.ColPlus sm={10} md={6} lg={5} xl={5}>
+                <Button
+                  onClick={() => {
+                    setAddFine(true)
+                    setFocus(true)
+                  }}
+                  type="primary"
+                >
+                  <FaPlus />
+                </Button>
+              </S.ColPlus>
+            )}
           </Row>
+
+          {additionalFines.length > 0 &&
+            additionalFines.map(penalty => (
+              <Row gutter={[16, 0]} key={penalty.title}>
+                <Col sm={10} md={6} lg={5} xl={5}>
+                  <Form.Item label={penalty.title} name={penalty.title}>
+                    <CurrencyInput
+                      value={penalty.value?.mask}
+                      onChangeEvent={(_: any, mask: any, value: any) =>
+                        handleFinesChange({
+                          title: penalty.title,
+                          value: { mask, value },
+                        })
+                      }
+                      prefix="$ "
+                      className="ant-input"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            ))}
+
+          {addFine && (
+            <Row>
+              <Col sm={8} md={6} lg={8} xl={6}>
+                <S.NewField>
+                  <Input
+                    onChange={e => setFineTemp(e.target.value)}
+                    placeholder="Ex: Multa adicional"
+                    autoFocus={focus}
+                    onPressEnter={handleFine}
+                  />
+                  <Button
+                    type="primary"
+                    danger
+                    onClick={() => setAddFine(false)}
+                  >
+                    <IoCloseSharp size={20} />
+                  </Button>
+                  <Button type="primary" onClick={handleFine}>
+                    <FaCheck />
+                  </Button>
+                </S.NewField>
+              </Col>
+            </Row>
+          )}
 
           <S.Footer>
             <S.Total>

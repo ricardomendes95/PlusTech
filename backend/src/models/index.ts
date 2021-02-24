@@ -2,6 +2,8 @@ import Contributor from './Contributor'
 import Pool from './Pool'
 import Payment from './Payment'
 import User from './User'
+import AdditionalAid from './AdditionalAid'
+import AdditionalFine from './AdditionalFine'
 
 Pool.hasMany(Contributor, {
   as: 'contributors',
@@ -27,4 +29,20 @@ Payment.belongsTo(Contributor, {
   as: 'contributor',
 })
 
-export { User, Pool, Contributor, Payment }
+Payment.hasMany(AdditionalAid, {
+  as: 'additionalAids',
+})
+
+Payment.hasMany(AdditionalFine, {
+  as: 'additionalFines',
+})
+
+AdditionalAid.belongsTo(Payment, {
+  as: 'payment',
+})
+
+AdditionalFine.belongsTo(Payment, {
+  as: 'payment',
+})
+
+export { User, Pool, Contributor, Payment, AdditionalFine, AdditionalAid }
