@@ -1,4 +1,5 @@
 import { Model, DataTypes, Optional } from 'sequelize'
+import { AdditionalAid, AdditionalFine } from '.'
 
 import { database } from '../database'
 
@@ -13,6 +14,8 @@ export interface PaymentAttributes {
   rent?: number
   taxi?: number
   fine?: number
+  additionalAids?: AdditionalAid[]
+  additionalFines?: AdditionalFine[]
   total?: number
   enabled?: boolean
   createdAt?: Date
@@ -42,6 +45,10 @@ export default class Payment
   public taxi!: number
 
   public fine!: number
+
+  public additionalAids!: AdditionalFine[]
+
+  public additionalFines!: AdditionalFine[]
 
   public total!: number
 

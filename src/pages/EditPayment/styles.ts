@@ -57,3 +57,20 @@ export const Footer = styled.div`
 
   border-top: 1px solid black;
 `
+export const NewField = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  input {
+    margin-right: 10px;
+  }
+  button {
+    margin-right: 10px;
+  }
+`
+
+export const ColPlus = styled(Col)`
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+`
