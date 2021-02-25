@@ -12,6 +12,19 @@ export const Drop = styled.div`
   justify-content: space-between;
   margin: 20px;
 `
+export const DropItens = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 20px 20px 0px 20px;
+`
+export const DropAdditional = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-left: 20px;
+  margin-right: 20px;
+`
 
 export const Payment = styled.div`
   margin: 20px;
@@ -52,3 +65,7 @@ export const Total = styled.div`
 `
 
 export const Content = styled.div``
+
+export const SubTitle = styled.div`
+  margin-top: 20px;
+`
