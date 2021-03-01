@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { SearchTypes, ToggleActiveTypes } from '../../components/HeaderContent'
 import { HeaderContent, Menu, Header } from '../../components'
-import { Table, Space, notification, Tooltip } from 'antd'
+import { Table, Space, notification, Tooltip, Modal, Col, Form } from 'antd'
 
 import {
   AiOutlineEdit,
@@ -10,6 +10,7 @@ import {
   AiOutlinePlus,
 } from 'react-icons/ai'
 import { GiCancel } from 'react-icons/gi'
+import { RiArrowUpDownFill } from 'react-icons/ri'
 
 import * as S from './styles'
 import { useHistory } from 'react-router-dom'
@@ -17,6 +18,7 @@ import { routes } from '../../routes'
 import { ContributorService } from '../../services'
 import { Definitions } from '../../core/types'
 import moment from 'moment'
+import { SelectPool } from '../../components/SelectPool/index'
 
 interface LoadContributorsParams {
   name?: string
@@ -40,6 +42,10 @@ export default function Home() {
   const [toggleActive, setToggleActive] = useState<ToggleActiveTypes>('active')
   const [filter, setFilter] = useState<Filter>({ value: '', type: 'name' })
 
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [contributorTemp, setContributorTemp] = useState<
+    Definitions['Contributor']
+  >({})
   const poolId = Number(window.localStorage.getItem('poolId'))
 
   const columns = [
@@ -68,8 +74,13 @@ export default function Home() {
       render: (text: string, record: Definitions['Contributor']) => (
         <Space size="middle">
           <Tooltip title="Editar" key={record.id}>
-            <S.Action onClick={() => update(record.id)}>
+            <S.Action onClick={() => update(Number(record.id))}>
               <AiOutlineEdit size={20} />
+            </S.Action>
+          </Tooltip>
+          <Tooltip title="Trocar Pool" key={record.id}>
+            <S.Action onClick={() => showModal(record)}>
+              <RiArrowUpDownFill size={20} />
             </S.Action>
           </Tooltip>
           <Tooltip
@@ -78,7 +89,9 @@ export default function Home() {
           >
             <S.Action
               onClick={() =>
-                record.enabled ? disable(record.id) : enable(record.id)
+                record.enabled
+                  ? disable(Number(record.id))
+                  : enable(Number(record.id))
               }
             >
               {record.enabled ? (
@@ -184,6 +197,38 @@ export default function Home() {
     history.push(routes.newContributor)
   }
 
+  function showModal(contributor: Definitions['Contributor']) {
+    setContributorTemp(contributor)
+    setIsModalVisible(true)
+  }
+
+  async function handleOk() {
+    setIsModalVisible(false)
+    try {
+      const { data } = await ContributorService.update(contributorTemp)
+      if (data) {
+        notification.success({
+          message: 'Salvo com Sucesso!',
+          description: `Matricula: ${contributorTemp.id}, Colaborador: ${contributorTemp.name}`,
+        })
+      }
+    } catch (error) {
+      notification.error({
+        message: 'Erro Interno',
+        description: 'erro ao tentar salvar',
+      })
+    }
+    const params: LoadContributorsParams = {
+      enabled: toggleActive === 'active',
+    }
+    loadContributors(params)
+    setContributorTemp({})
+  }
+
+  function handleCancel() {
+    setIsModalVisible(false)
+  }
+
   useEffect(() => {
     const params: LoadContributorsParams = {
       enabled: toggleActive === 'active',
@@ -203,6 +248,23 @@ export default function Home() {
   return (
     <Menu active="home">
       <S.Container>
+        <Modal
+          title="Trocar usuário de Pool"
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <Col sm={20} md={15} lg={20} xl={20}>
+            <Form.Item label="Pool">
+              <SelectPool
+                contributor={contributorTemp}
+                onContributorChange={(valor: Definitions['Contributor']) =>
+                  setContributorTemp(valor)
+                }
+              ></SelectPool>
+            </Form.Item>
+          </Col>
+        </Modal>
         <Header text="Colaboradores" />
         <S.Content>
           <HeaderContent

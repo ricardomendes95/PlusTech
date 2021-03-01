@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Op, WhereOptions } from 'sequelize'
 
-import { Contributor } from '../models'
+import { Contributor, Payment } from '../models'
 import { ContributorAttributes } from '../models/Contributor'
 
 class ContributorController {
@@ -122,6 +122,10 @@ class ContributorController {
     }
 
     try {
+      // const idPoolPrevious = await Contributor.findByPk(request.params.id, {
+      //   attributes: ['poolId'],
+      // })
+
       await Contributor.update(
         {
           poolId,
@@ -132,6 +136,15 @@ class ContributorController {
           enabled,
         },
         { where: { id } },
+      )
+
+      await Payment.update(
+        {
+          poolId,
+        },
+        {
+          where: { contributorId: id },
+        },
       )
 
       return response.send()

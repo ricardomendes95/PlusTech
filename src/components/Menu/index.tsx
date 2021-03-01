@@ -9,6 +9,7 @@ import {
   AiOutlineLogout,
   AiOutlineSetting,
 } from 'react-icons/ai'
+import { RiExchangeDollarLine } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
 import { routes } from '../../routes'
 
@@ -55,11 +56,21 @@ export const Menu: React.FC<MenuProps> = ({ active = 'none', children }) => {
 
         <S.MenuItem active={active === 'movement'}>
           <Link to={routes.payment}>
-            <AiOutlineSwap
+            <RiExchangeDollarLine
               style={{ paddingRight: open ? '16px' : '0px' }}
               size={open ? 45 : 50}
             />
             {open && <span>Movimentação</span>}
+          </Link>
+        </S.MenuItem>
+
+        <S.MenuItem active={false}>
+          <Link to={routes.pool}>
+            <AiOutlineSwap
+              style={{ paddingRight: open ? '16px' : '0px' }}
+              size={open ? 45 : 50}
+            />
+            {open && <span>Trocar de Pool</span>}
           </Link>
         </S.MenuItem>
 
