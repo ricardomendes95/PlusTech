@@ -3,7 +3,6 @@ import {
   Row,
   Form,
   Col,
-  Select,
   DatePicker,
   ConfigProvider,
   Button,
@@ -16,10 +15,11 @@ import 'moment/locale/pt-br'
 import locale from 'antd/lib/locale/pt_BR'
 
 import * as S from './styles'
-import { ContributorService, PoolService } from '../../services'
+import { ContributorService } from '../../services'
 import { Definitions } from '../../core/types'
 import { useHistory } from 'react-router-dom'
 import { routes } from '../../routes'
+import { SelectPool } from '../../components/SelectPool'
 
 export default function NewContributor() {
   const [poolId, setPoolId] = useState(window.localStorage.getItem('poolId'))
@@ -27,25 +27,11 @@ export default function NewContributor() {
   const [dateAdmission, setDateAdmission] = useState(new Date())
   const [email, setEmail] = useState('')
   const [wallet, setWallet] = useState('')
+  const [contributorTemp, setContributorTemp] = useState<
+    Definitions['Contributor']
+  >({})
 
   const history = useHistory()
-
-  const [poolsOptions, setPoolsOptions] = useState<Definitions['Pool'][]>([])
-
-  async function loadPools() {
-    try {
-      const { data } = await PoolService.getAll()
-
-      setPoolsOptions(data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  function handleSelectPool(value: string) {
-    const idPool = poolsOptions?.find(opt => opt.name === value)?.id || ''
-    setPoolId(String(idPool))
-  }
 
   async function handleSave() {
     // event.preventDefault()
@@ -71,8 +57,12 @@ export default function NewContributor() {
   }
 
   useEffect(() => {
-    loadPools()
+    setContributorTemp({ poolId: Number(poolId) })
   }, [])
+
+  useEffect(() => {
+    setPoolId(String(contributorTemp.poolId))
+  }, [contributorTemp])
 
   return (
     <S.Container>
@@ -84,13 +74,14 @@ export default function NewContributor() {
             <Row gutter={[16, 0]}>
               <Col sm={10} md={8} lg={8} xl={5}>
                 <Form.Item label="Pool">
-                  <Select value={String(poolId)} onChange={handleSelectPool}>
-                    {poolsOptions?.map(pool => (
-                      <Select.Option key={pool.id} value={String(pool.id)}>
-                        {pool.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
+                  {contributorTemp.poolId !== undefined && (
+                    <SelectPool
+                      contributor={contributorTemp}
+                      onContributorChange={(
+                        valor: Definitions['Contributor'],
+                      ) => setContributorTemp(valor)}
+                    ></SelectPool>
+                  )}
                 </Form.Item>
               </Col>
             </Row>

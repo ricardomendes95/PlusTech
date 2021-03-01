@@ -12,11 +12,13 @@ export type ToggleActiveTypes = 'active' | 'inactive'
 interface HeaderContentProps {
   onSearch?: (value: string | Array<Date>, searchType: SearchTypes) => void
   onToggleActive?: (active: ToggleActiveTypes) => void
+  origin?: string
 }
 
 export const HeaderContent = ({
   onSearch,
   onToggleActive,
+  origin,
 }: HeaderContentProps) => {
   const [searchType, setSearchType] = useState<SearchTypes>('name')
   const [toggleActive, setToggleActive] = useState<ToggleActiveTypes>('active')
@@ -76,8 +78,12 @@ export const HeaderContent = ({
           value={toggleActive}
           onChange={e => setToggleActive(e.target.value)}
         >
-          <Radio.Button value="active">Ativos</Radio.Button>
-          <Radio.Button value="inactive">Inativos</Radio.Button>
+          <Radio.Button value="active">
+            {origin === 'payments' ? 'Pendente' : 'Ativos'}
+          </Radio.Button>
+          <Radio.Button value="inactive">
+            {origin === 'payments' ? 'Concluído' : 'Inativos'}
+          </Radio.Button>
         </Radio.Group>
       </S.AsideContent>
     </S.HeaderContent>

@@ -249,7 +249,7 @@ export default function Home() {
     <Menu active="home">
       <S.Container>
         <Modal
-          title="Trocar usuário de Pool"
+          title={`Trocar ${contributorTemp.name} de Pool`}
           visible={isModalVisible}
           onOk={handleOk}
           onCancel={handleCancel}

@@ -96,8 +96,8 @@ export default function Movement() {
             <S.Action
               onClick={() =>
                 record.enabled
-                  ? handleDisable(record.id)
-                  : handleEnable(record.id)
+                  ? handleDisable(Number(record.id))
+                  : handleEnable(Number(record.id))
               }
             >
               {record.enabled ? (
@@ -109,7 +109,7 @@ export default function Movement() {
           </Tooltip>
 
           <Tooltip title="Imprimir" key={record.id}>
-            <S.Action onClick={() => handlePrintDoc(record.id)}>
+            <S.Action onClick={() => handlePrintDoc(Number(record.id))}>
               <AiOutlinePrinter size={20} />
             </S.Action>
           </Tooltip>
@@ -227,6 +227,7 @@ export default function Movement() {
           <HeaderContent
             onSearch={handleSearch}
             onToggleActive={handleToggleActive}
+            origin="payments"
           />
 
           <Table

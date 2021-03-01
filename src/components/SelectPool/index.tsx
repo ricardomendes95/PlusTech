@@ -38,6 +38,7 @@ export const SelectPool = ({
     setPoolId(String(contributor?.poolId))
     loadPools()
   }, [])
+
   useEffect(() => {
     if (onContributorChange) {
       onContributorChange({ ...contributor, poolId: Number(poolId) })

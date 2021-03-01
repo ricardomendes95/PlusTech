@@ -3,7 +3,6 @@ import {
   Row,
   Form,
   Col,
-  Select,
   DatePicker,
   ConfigProvider,
   Button,
@@ -16,10 +15,11 @@ import 'moment/locale/pt-br'
 import locale from 'antd/lib/locale/pt_BR'
 
 import * as S from './styles'
-import { ContributorService, PoolService } from '../../services'
+import { ContributorService } from '../../services'
 import { Definitions } from '../../core/types'
 import { useHistory, useParams } from 'react-router-dom'
 import { routes } from '../../routes'
+import { SelectPool } from '../../components/SelectPool'
 
 interface ContributorParams {
   id: string
@@ -28,31 +28,24 @@ interface ContributorParams {
 export default function EditContributor() {
   const params = useParams<ContributorParams>()
   const [id, setId] = useState<number>()
-  const [poolId, setPoolId] = useState<string>()
+  const [poolId, setPoolId] = useState<number>()
   const [name, setName] = useState('')
   const [dateAdmission, setDateAdmission] = useState<Date>()
   const [email, setEmail] = useState<string>()
   const [wallet, setWallet] = useState<string>()
+  const [contributorTemp, setContributorTemp] = useState<
+    Definitions['Contributor']
+  >({})
 
   const history = useHistory()
 
-  const [poolsOptions, setPoolsOptions] = useState<Definitions['Pool'][]>([])
-
-  async function loadPools() {
-    try {
-      const { data } = await PoolService.getAll()
-
-      setPoolsOptions(data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
   async function loadContributor(): Promise<void> {
     try {
       const { data } = await ContributorService.findByPK(Number(params?.id))
+      setContributorTemp(data)
 
       setId(data.id)
-      setPoolId(String(data.poolId))
+      setPoolId(data.poolId)
       setName(data.name || '')
 
       if (data.admissionDate) {
@@ -63,11 +56,6 @@ export default function EditContributor() {
     } catch (error) {
       console.log(error)
     }
-  }
-
-  function handleSelectPool(value: string) {
-    const idPool = poolsOptions?.find(opt => opt.name === value)?.id || ''
-    setPoolId(String(idPool))
   }
 
   async function handleSave() {
@@ -96,9 +84,12 @@ export default function EditContributor() {
   }
 
   useEffect(() => {
-    loadPools()
     loadContributor()
   }, [])
+
+  useEffect(() => {
+    setPoolId(contributorTemp.poolId)
+  }, [contributorTemp])
 
   return (
     <S.Container>
@@ -127,13 +118,14 @@ export default function EditContributor() {
 
               <Col sm={10} md={8} lg={8} xl={5}>
                 <Form.Item label="Pool">
-                  <Select value={String(poolId)} onChange={handleSelectPool}>
-                    {poolsOptions?.map(pool => (
-                      <Select.Option key={pool.id} value={String(pool.id)}>
-                        {pool.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
+                  {contributorTemp.poolId !== undefined && (
+                    <SelectPool
+                      contributor={contributorTemp}
+                      onContributorChange={(
+                        valor: Definitions['Contributor'],
+                      ) => setContributorTemp(valor)}
+                    ></SelectPool>
+                  )}
                 </Form.Item>
               </Col>
             </Row>
