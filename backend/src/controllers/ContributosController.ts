@@ -39,8 +39,8 @@ class ContributorController {
       }
 
       if (startDate && endDate) {
-        const start = new Date(startDate.toString())
-        const end = new Date(endDate.toString())
+        const start = new Date(startDate.toString()).setHours(0)
+        const end = new Date(endDate.toString()).setHours(24)
 
         where.admissionDate = { [Op.between]: [start, end] }
       }

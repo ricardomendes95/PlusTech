@@ -122,6 +122,8 @@ export default function Movement() {
     setLoadingPayments(true)
 
     try {
+      console.log(params)
+
       const response = await PaymentService.getAll({ poolId, params })
 
       setPayments(response.data)

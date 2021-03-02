@@ -58,19 +58,18 @@ class PaymentController {
     }
     let contributorWhere: WhereOptions<ContributorAttributes> = {}
 
-    if (contributor) {
+    if (contributor && isNaN(Number(contributor))) {
       contributorWhere = {
-        [Op.or]: [
-          { id: Number(contributor) || 0 },
-          { name: { [Op.like]: `%${contributor}%` } },
-        ],
+        [Op.or]: [{ name: { [Op.like]: `%${contributor}%` } }],
       }
+    }
+    if (contributor && !isNaN(Number(contributor))) {
+      where.id = Number(contributor)
     }
 
     if (startDate && endDate) {
-      const start = new Date(startDate.toString())
-      const end = new Date(endDate.toString())
-
+      const start = new Date(startDate.toString()).setHours(0)
+      const end = new Date(endDate.toString()).setHours(24)
       where.createdAt = { [Op.between]: [start, end] }
     }
 
